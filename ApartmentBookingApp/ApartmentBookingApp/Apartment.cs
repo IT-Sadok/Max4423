@@ -15,7 +15,14 @@ namespace ApartmentBookingApp
 
 		public int Capacity { get; set; }
 
-		public bool IsAvailable { get; set; }
+		public bool IsAvailable { get; set; } = true;
 
+		public Apartment(int Id, string Title, decimal PricePerNight, int Capacity)
+		{
+			this.Id = Id;
+			this.Title = Title;
+			this.PricePerNight = PricePerNight;
+			this.Capacity = Capacity;
+		}
 	}
 }

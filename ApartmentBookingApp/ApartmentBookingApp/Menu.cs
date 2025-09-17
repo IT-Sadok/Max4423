@@ -16,6 +16,7 @@ namespace ApartmentBookingApp
 			"Add apartment to host",
 			"Show all hosts",
 			"Show apartments by host id",
+			"Book apartment",
 			"Exit"
 		};
 
@@ -48,12 +49,21 @@ namespace ApartmentBookingApp
 			switch (choice)
 			{
 				case 1:
+					BookingSystem.AddHost();
 					break;
 				case 2:
+					BookingSystem.AddApartmentToHost();
 					break;
 				case 3:
+					BookingSystem.ShowHosts();
 					break;
 				case 4:
+					BookingSystem.ShowApartmentByHostId();
+					break;
+				case 5:
+					BookingSystem.BookApartment();
+					break;
+				case 6:
 					Environment.Exit(111);
 					break;
 			}
