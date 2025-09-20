@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ApartmentBookingApp
+﻿namespace ApartmentBookingApp
 {
 	internal class Host
 	{
-		public int Id { get; set; }
+		private static int _nextId = 1;
+		public int Id { get; private set; }
 		public string FullName { get; set; }
 		public string PhoneNumber { get; set; }
 		public List<Apartment> Apartments = new List<Apartment>();
-		public Host(int Id, string FullName, string PhoneNumber)
+		public Host(string FullName, string PhoneNumber)
 		{
-			this.Id = Id;
+			Id = _nextId++;;
 			this.FullName = FullName;
 			this.PhoneNumber = PhoneNumber;
 		}

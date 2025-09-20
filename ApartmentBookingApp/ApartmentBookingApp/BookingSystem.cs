@@ -1,209 +1,143 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ApartmentBookingApp
+﻿namespace ApartmentBookingApp
 {
-	internal class BookingSystem
-	{
-		static List<Host> hosts = new List<Host>();
+    internal class BookingSystem
+    {
+        static List<Host> _hosts = new List<Host>();
 
-		public static void AddHost()
-		{
-			int Id;
-			while (true)
-			{
-				Console.Write("Enter host`s Id: ");
-				if (int.TryParse(Console.ReadLine(), out Id) && Id > 0)
-					break;
-				Console.WriteLine("Invalid host`s Id. Please enter positive integer value.");
-			}
+        public static void AddHost()
+        {
+            string FullName = InputHelper.ReadStringValue("Enter host`s fullname: ", v => v.Length > 0,
+                "Fullname cannot be null or empty.");
 
-			string FullName;
+            string PhoneNumber = InputHelper.ReadStringValue("Enter host`s phone number: ",
+                v => v.Length > 5 && v.Length < 15, "Phone number cannot be < 5 and > 15 symbols");
 
-			while (true)
-			{
-				Console.Write("Enter host`s fullname: ");
-				FullName = Console.ReadLine();
+            _hosts.Add(new Host(FullName, PhoneNumber));
+        }
 
-				if (!string.IsNullOrWhiteSpace(FullName))
-					break;
-				Console.WriteLine("Fullname cannot be null or empty.");
-			}
+        public static void ShowHosts()
+        {
+            if (_hosts.Count > 0)
+            {
+                for (int i = 0; i < _hosts.Count; i++)
+                {
+                    Console.Write($"[{i + 1}]. ");
+                    _hosts[i].ShowInfo();
+                    Console.Write("\n");
+                }
+            }
 
-			string PhoneNumber;
+            else
+                Console.WriteLine("_hosts list is empty!");
+        }
 
-			while (true)
-			{
-				Console.Write("Enter host`s phone number: ");
+        public static void AddApartmentToHost()
+        {
+            if (_hosts.Count == 0)
+            {
+                Console.WriteLine("_hosts list is empty!");
+                return;
+            }
+            int hostNumber;
 
-				PhoneNumber = Console.ReadLine();
-				if (PhoneNumber.Length > 5 && PhoneNumber.Length < 15)
-					break;
-				Console.WriteLine("Phone number cannot be < 5 and > 15 symbols");
-			}
+            BookingSystem.ShowHosts();
+            Console.Write($"Please, select host number(1 - {_hosts.Count}): ");
+            while (true)
+            {
+                if ((int.TryParse(Console.ReadLine(), out hostNumber) && hostNumber > 0 && hostNumber <= _hosts.Count))
+                    break;
 
-			hosts.Add(new Host(Id, FullName, PhoneNumber));
-		}
+                Console.WriteLine("Incorrect host number. Please reenter.");
+            }
 
-		public static void ShowHosts()
-		{
-			if (hosts.Count > 0)
-			{
-				for (int i = 0; i < hosts.Count; i++)
-				{
-					Console.Write($"[{i + 1}]. ");
-					hosts[i].ShowInfo();
-					Console.Write("\n");
-				}
-			}
+            string Title = InputHelper.ReadStringValue("Enter apartment Title: ", v => v.Length > 0,
+                "Title cannot be null or empty.");
 
-			else
-				Console.WriteLine("Hosts list is empty!");
-		}
+            decimal PricePerNight = InputHelper.ReadDecimalValue("Enter price per night: ", v => v > 0,
+                "Please, enter correct decimal value.");
 
-		public static void AddApartmentToHost()
-		{
-			if (hosts.Count == 0)
-			{
-				Console.WriteLine("Hosts list is empty!");
-				return;
-			}
-			int hostNumber;
+            int Capacity = InputHelper.ReadIntValue("Enter apartment capacity: ", v => v > 0,
+                "Invalid apartment capacity. Please enter positive integer value.");
 
-			BookingSystem.ShowHosts();
-			Console.Write($"Please, select host number(1 - {hosts.Count}): ");
-			while (true)
-			{
-				if ((int.TryParse(Console.ReadLine(), out hostNumber) && hostNumber > 0 && hostNumber <= hosts.Count))
-					break;
-
-				Console.WriteLine("Incorrect host number. Please reenter.");
-			}
+            _hosts[hostNumber - 1].Apartments.Add(new Apartment(Title, PricePerNight, Capacity));
+        }
 
 
+        static int HostNumber;
 
-			int Id;
-			while (true)
-			{
-				Console.Write("Enter apartment Id: ");
-				if (int.TryParse(Console.ReadLine(), out Id) && Id > 0)
-					break;
-				Console.WriteLine("Invalid apartment Id. Please enter positive integer value.");
-			}
+        public static void ShowApartmentByHostId()
+        {
+            if (_hosts.Count > 0)
+            {
+                for (int i = 0; i < _hosts.Count; i++)
+                {
+                    Console.Write($"[{i + 1}]. ");
+                    _hosts[i].ShowInfo();
+                    Console.Write("\n");
+                }
+            }
+            else
+            {
+                Console.WriteLine("There is no _hosts!");
+                return;
+            }
 
-			string Title;
+            HostNumber = InputHelper.ReadIntValue(
+                "Please, select host number: ",
+                v => v >= 0 && v <= _hosts.Count,
+                "Incorrect host number. Please reenter."
+            );
 
-			while (true)
-			{
-				Console.Write("Enter apartment Title: ");
-				Title = Console.ReadLine();
 
-				if (!string.IsNullOrWhiteSpace(Title))
-					break;
-				Console.WriteLine("Title cannot be null or empty.");
-			}
+            if (_hosts[HostNumber - 1].Apartments.Count == 0)
+            {
+                Console.WriteLine("This is host without apartments!");
+                return;
+            }
 
-			decimal PricePerNight;
+            for (int i = 0; i < _hosts[HostNumber - 1].Apartments.Count; i++)
+            {
+                Console.WriteLine(
+                    $"{i + 1}. Id: {_hosts[HostNumber - 1].Apartments[i].Id} | Title: {_hosts[HostNumber - 1].Apartments[i].Title} | PricePerNight: {_hosts[HostNumber - 1].Apartments[i].PricePerNight} | Capacity: {_hosts[HostNumber - 1].Apartments[i].Capacity} | IsAvailable: {_hosts[HostNumber - 1].Apartments[i].IsAvailable}");
+            }
+        }
 
-			while (true)
-			{
-				Console.Write("Enter price per night: ");
-				if (decimal.TryParse(Console.ReadLine(), out PricePerNight))
-					break;
-				Console.WriteLine("Please, enter correct decimal value.");
-			}
+        public static void BookApartment()
+        {
+            ShowApartmentByHostId();
+            if (_hosts.Count == 0)
+                return;
 
-			int Capacity;
-			while (true)
-			{
-				Console.Write("Enter apartment capacity: ");
-				if (int.TryParse(Console.ReadLine(), out Capacity) && Capacity > 0)
-					break;
-				Console.WriteLine("Invalid apartment capacity. Please enter positive integer value.");
-			}
+            if (_hosts[HostNumber - 1].Apartments.Count == 0)
+                return;
 
-			hosts[hostNumber - 1].Apartments.Add(new Apartment(Id, Title, PricePerNight, Capacity));
+            Console.Write(
+                $"Enter {_hosts[HostNumber - 1].FullName} host`s apartment number (1 - {_hosts[HostNumber - 1].Apartments.Count}): ");
 
-		}
+            int apartmentNumber;
+            while (true)
+            {
+                if (int.TryParse(Console.ReadLine(), out apartmentNumber) &&
+                    apartmentNumber > 0 &&
+                    apartmentNumber <= _hosts[HostNumber - 1].Apartments.Count)
+                {
+                    break;
+                }
 
-		static int HostNumber;
-		public static void ShowApartmentByHostId()
-		{
+                Console.WriteLine("Invalid apartment number. Please reenter.");
+            }
 
-			if (hosts.Count > 0)
-			{
-				for (int i = 0; i < hosts.Count; i++)
-				{
-					Console.Write($"[{i + 1}]. ");
-					hosts[i].ShowInfo();
-					Console.Write("\n");
-				}
-			}
-			else
-			{
-				Console.WriteLine("There is no hosts!");
-				return;
-			}
-			while (true)
-			{
-				Console.Write("Enter host`s numder: ");
-				if (int.TryParse(Console.ReadLine(), out HostNumber) && HostNumber > 0 && HostNumber <= hosts.Count)
-					break;
-				Console.WriteLine("Invalid host`s number. Please reenter.");
-			}
+            var apartment = _hosts[HostNumber - 1].Apartments[apartmentNumber - 1];
 
-			if (hosts[HostNumber - 1].Apartments.Count == 0)
-			{
-				Console.WriteLine("This is host without apartments!");
-				return;
-			}
-			for (int i = 0; i < hosts[HostNumber - 1].Apartments.Count; i++)
-			{
-
-				Console.WriteLine($"{i + 1}. Id: {hosts[HostNumber - 1].Apartments[i].Id} | Title: {hosts[HostNumber - 1].Apartments[i].Title} | PricePerNight: {hosts[HostNumber - 1].Apartments[i].PricePerNight} | Capacity: {hosts[HostNumber - 1].Apartments[i].Capacity} | IsAvailable: {hosts[HostNumber - 1].Apartments[i].IsAvailable}");
-
-			}
-		}
-
-		public static void BookApartment()
-		{
-			ShowApartmentByHostId();
-			if (hosts.Count == 0)
-				return;
-
-			if (hosts[HostNumber - 1].Apartments.Count == 0)
-				return;
-
-			Console.Write($"Enter {hosts[HostNumber - 1].FullName} host`s apartment number (1 - {hosts[HostNumber - 1].Apartments.Count}): ");
-
-			int apartmentNumber;
-			while (true)
-			{
-				if (int.TryParse(Console.ReadLine(), out apartmentNumber) &&
-					apartmentNumber > 0 &&
-					apartmentNumber <= hosts[HostNumber - 1].Apartments.Count)
-				{
-					break;
-				}
-				Console.WriteLine("Invalid apartment number. Please reenter.");
-			}
-
-			var apartment = hosts[HostNumber - 1].Apartments[apartmentNumber - 1];
-
-			if (apartment.IsAvailable)
-			{
-				apartment.IsAvailable = false;
-				Console.WriteLine($"Apartment #{apartmentNumber} in {hosts[HostNumber - 1].FullName} is booked!");
-			}
-			else
-			{
-				Console.WriteLine("This apartment was already booked.");
-			}
-		}
-
-	}
+            if (apartment.IsAvailable)
+            {
+                apartment.IsAvailable = false;
+                Console.WriteLine($"Apartment #{apartmentNumber} in {_hosts[HostNumber - 1].FullName} is booked!");
+            }
+            else
+            {
+                Console.WriteLine("This apartment was already booked.");
+            }
+        }
+    }
 }

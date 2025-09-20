@@ -1,28 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ApartmentBookingApp
+﻿namespace ApartmentBookingApp
 {
-	internal class Apartment
-	{
-		public int Id { get; set; }
-		public string Title { get; set; }
+    internal class Apartment
+    {
+        private static int _nextId = 1;
+        public int Id { get; private set; }
+        public string Title { get; set; }
 
-		public decimal PricePerNight { get; set; }
+        public decimal PricePerNight { get; set; }
 
-		public int Capacity { get; set; }
+        public int Capacity { get; set; }
 
-		public bool IsAvailable { get; set; } = true;
+        public bool IsAvailable { get; set; } = true;
 
-		public Apartment(int Id, string Title, decimal PricePerNight, int Capacity)
-		{
-			this.Id = Id;
-			this.Title = Title;
-			this.PricePerNight = PricePerNight;
-			this.Capacity = Capacity;
-		}
-	}
+        public Apartment(string Title, decimal PricePerNight, int Capacity)
+        {
+            Id = _nextId++;
+            this.Title = Title;
+            this.PricePerNight = PricePerNight;
+            this.Capacity = Capacity;
+        }
+    }
 }
