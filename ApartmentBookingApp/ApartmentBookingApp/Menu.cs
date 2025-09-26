@@ -2,7 +2,8 @@
 {
 	internal class Menu
 	{
-		int choice = 0;
+		private BookingService _bookingService;
+		int _choice;
 
 		readonly List<string> MenuItems = new List<string>
 		{
@@ -10,10 +11,13 @@
 			"Add apartment to host",
 			"Show all hosts",
 			"Show apartments by host id",
-			"Book apartment",
 			"Exit"
 		};
 
+		public Menu(BookingService bookingService)
+		{
+			_bookingService = bookingService;
+		}
 		public void ShowMenu()
 		{
 			Console.Clear();
@@ -28,40 +32,37 @@
 		{
 			Console.Write("Enter your choice: ");
 
-			while (choice == 0)
+			while (_choice == 0)
 			{
-				if (!int.TryParse(Console.ReadLine(), out choice) || choice <= 0 || choice > MenuItems.Count)
+				if (!int.TryParse(Console.ReadLine(), out _choice) || _choice <= 0 || _choice > MenuItems.Count)
 				{
 					Console.Write("Reenter your choice: ");
-					choice = 0;
+					_choice = 0;
 				}
 			}
 		}
 
 		public void ProcessUserChoice()
 		{
-			switch (choice)
+			switch (_choice)
 			{
 				case 1:
-					BookingSystem.AddHost();
+					_bookingService.AddHost();
 					break;
 				case 2:
-					BookingSystem.AddApartmentToHost();
+					_bookingService.AddApartmentToHost();
 					break;
 				case 3:
-					BookingSystem.ShowHosts();
+					_bookingService.ShowHosts();
 					break;
 				case 4:
-					BookingSystem.ShowApartmentByHostId();
+					_bookingService.ShowApartmentByHostId();
 					break;
 				case 5:
-					BookingSystem.BookApartment();
-					break;
-				case 6:
-					Environment.Exit(111);
+					Environment.Exit(0);
 					break;
 			}
-			choice = 0;
+			_choice = 0;
 			Console.Write("Press any key to continue: ");
 			Console.ReadKey();
 		}

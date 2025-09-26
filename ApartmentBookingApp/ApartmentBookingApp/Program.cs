@@ -4,8 +4,8 @@
 	{
 		static void Main(string[] args)
 		{
-			BookingSystem bookingSystem = new BookingSystem();
-			Menu menu = new Menu();
+			var bookingService = new BookingService();
+			var menu = new Menu(bookingService);
 			while (true)
 			{
 				menu.ShowMenu();
