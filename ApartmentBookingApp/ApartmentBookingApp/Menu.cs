@@ -56,7 +56,16 @@
 					_bookingService.ShowHosts();
 					break;
 				case 4:
-					_bookingService.ShowApartmentByHostId();
+					_bookingService.ShowHosts();
+					if (_bookingService.HostsCount() == 0)
+					{
+						break;
+					}
+					_bookingService.ShowApartmentByHostId(InputHelper.ReadIntValue(
+						"Please, select host number: ",
+						v => v > 0 && v <= _bookingService.HostsCount(),
+						"Incorrect host number. Please reenter."
+					));
 					break;
 				case 5:
 					Environment.Exit(0);
