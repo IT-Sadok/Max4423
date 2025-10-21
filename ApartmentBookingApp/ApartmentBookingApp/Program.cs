@@ -4,7 +4,8 @@
 	{
 		static void Main(string[] args)
 		{
-			var bookingService = new BookingService();
+			var idGenerator = new IdGeneratorService();
+			var bookingService = new BookingService(idGenerator);
 			var menu = new Menu(bookingService);
 			while (true)
 			{

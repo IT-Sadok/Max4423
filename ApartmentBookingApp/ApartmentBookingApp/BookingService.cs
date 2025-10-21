@@ -3,8 +3,13 @@
     internal class BookingService
     {
         private List<Host> _hosts = new List<Host>();
-        private IdGeneratorService _idGeneratorService = new IdGeneratorService();
+        private readonly IIdGeneratorService _idGeneratorService;
 
+        public BookingService(IIdGeneratorService idGeneratorService)
+        {
+            _idGeneratorService = idGeneratorService;
+        }
+        
         public void AddHost()
         {
             var fullName = InputHelper.ReadStringValue("Enter host`s fullname: ", v => v.Length > 0,
