@@ -7,6 +7,4 @@ public class IdGeneratorService
     
     public int GetNextApartamentId() => _nextApartmentId++;
     public int GetNextHostId() => _nextHostId++;
-
-    
 }

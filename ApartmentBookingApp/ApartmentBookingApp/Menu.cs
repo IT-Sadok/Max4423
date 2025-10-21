@@ -3,16 +3,8 @@
 	internal class Menu
 	{
 		private BookingService _bookingService;
-		int _choice;
-		enum MenuItems
-		{
-			AddHost = 1,
-			AddApartmentToHost,
-			ShowAllHosts,
-			ShowApartmentsByHostId,
-			Exit,
-		}
-
+		private int _choice;
+		
 		public Menu(BookingService bookingService)
 		{
 			_bookingService = bookingService;
