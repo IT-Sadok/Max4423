@@ -2,6 +2,6 @@
 
 public interface IIdGeneratorService
 { 
-    int GetNextApartamentId(); 
+    int GetNextApartmentId(); 
     int GetNextHostId();
 }

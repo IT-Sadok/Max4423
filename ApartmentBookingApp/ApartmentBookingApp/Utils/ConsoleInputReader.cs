@@ -1,6 +1,6 @@
 ﻿namespace ApartmentBookingApp;
 
-public static class InputHelper
+public static class ConsoleInputReader
 {
     public static int ReadIntValue(string message, Func<int, bool> validator, string errorMessage)
     {

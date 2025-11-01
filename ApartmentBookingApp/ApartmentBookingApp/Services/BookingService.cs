@@ -12,10 +12,10 @@
         
         public void AddHost()
         {
-            var fullName = InputHelper.ReadStringValue("Enter host`s fullname: ", v => v.Length > 0,
+            var fullName = ConsoleInputReader.ReadStringValue("Enter host`s fullname: ", v => v.Length > 0,
                 "Fullname cannot be null or empty.");
 
-            var phoneNumber = InputHelper.ReadStringValue("Enter host`s phone number: ",
+            var phoneNumber = ConsoleInputReader.ReadStringValue("Enter host`s phone number: ",
                 v => v.Length > 5 && v.Length < 15, "Phone number cannot be < 5 and > 15 symbols");
 
             _hosts.Add(new Host()
@@ -58,18 +58,18 @@
                 Console.WriteLine("Incorrect host number. Please reenter.");
             }
 
-            var title = InputHelper.ReadStringValue("Enter apartment Title: ", v => v.Length > 0,
+            var title = ConsoleInputReader.ReadStringValue("Enter apartment Title: ", v => v.Length > 0,
                 "Title cannot be null or empty.");
 
-            var pricePerNight = InputHelper.ReadDecimalValue("Enter price per night: ", v => v > 0,
+            var pricePerNight = ConsoleInputReader.ReadDecimalValue("Enter price per night: ", v => v > 0,
                 "Please, enter correct decimal value.");
 
-            var capacity = InputHelper.ReadIntValue("Enter apartment capacity: ", v => v > 0,
+            var capacity = ConsoleInputReader.ReadIntValue("Enter apartment capacity: ", v => v > 0,
                 "Invalid apartment capacity. Please enter positive integer value.");
 
             _hosts[hostNumber - 1].Apartments.Add(new Apartment()
             {
-                Id = _idGeneratorService.GetNextApartamentId(), Title = title, PricePerNight = pricePerNight,
+                Id = _idGeneratorService.GetNextApartmentId(), Title = title, PricePerNight = pricePerNight,
                 Capacity = capacity
             });
         }

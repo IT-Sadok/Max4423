@@ -14,7 +14,7 @@
 		{
 			Console.Clear();
 			Console.WriteLine("Apartment booking menu");
-			foreach (MenuItems menuItem in Enum.GetValues(typeof(MenuItems)))
+			foreach (MenuItem menuItem in Enum.GetValues(typeof(MenuItem)))
 			{
 				Console.WriteLine($"{(int)menuItem}. {menuItem}");
 			}
@@ -26,7 +26,7 @@
 
 			while (_choice == 0)
 			{
-				if (!int.TryParse(Console.ReadLine(), out _choice) || !Enum.IsDefined(typeof(MenuItems), _choice))
+				if (!int.TryParse(Console.ReadLine(), out _choice) || !Enum.IsDefined(typeof(MenuItem), _choice))
 				{
 					Console.Write("Reenter your choice: ");
 					_choice = 0;
@@ -36,30 +36,30 @@
 
 		public void ProcessUserChoice()
 		{
-			switch ((MenuItems)_choice)
+			switch ((MenuItem)_choice)
 			{
-				case MenuItems.AddHost:
+				case MenuItem.AddHost:
 					_bookingService.AddHost();
 					break;
-				case MenuItems.AddApartmentToHost:
+				case MenuItem.AddApartmentToHost:
 					_bookingService.AddApartmentToHost();
 					break;
-				case MenuItems.ShowAllHosts:
+				case MenuItem.ShowAllHosts:
 					_bookingService.ShowHosts();
 					break;
-				case MenuItems.ShowApartmentsByHostId:
+				case MenuItem.ShowApartmentsByHostId:
 					_bookingService.ShowHosts();
 					if (_bookingService.HostsCount() == 0)
 					{
 						break;
 					}
-					_bookingService.ShowApartmentByHostId(InputHelper.ReadIntValue(
+					_bookingService.ShowApartmentByHostId(ConsoleInputReader.ReadIntValue(
 						"Please, select host number: ",
 						v => v > 0 && v <= _bookingService.HostsCount(),
 						"Incorrect host number. Please reenter."
 					));
 					break;
-				case MenuItems.Exit:
+				case MenuItem.Exit:
 					Environment.Exit(0);
 					break;
 			}
