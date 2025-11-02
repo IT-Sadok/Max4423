@@ -35,4 +35,18 @@ public static class ConsoleInputReader
             Console.WriteLine(errorMessage);
         }
     }
+    
+    public static string ReadOptionalStringValue(string message, Func<string, bool> validator, string errorMessage)
+    {
+        while (true)
+        {
+            Console.Write(message); 
+            string value = Console.ReadLine();
+            if (string.IsNullOrEmpty(value))
+                return null;
+            if (validator(value))
+                return value;
+            Console.WriteLine(errorMessage);
+        }
+    }
 }

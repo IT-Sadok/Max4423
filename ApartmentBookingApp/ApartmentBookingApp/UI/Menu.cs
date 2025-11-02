@@ -44,6 +44,12 @@
 				case MenuItem.AddHost:
 					_hostService.AddHost();
 					break;
+				case MenuItem.UpdateHost:
+					_hostService.UpdateHost();
+					break;
+				case MenuItem.DeleteHost:
+					_hostService.DeleteHost();
+					break;
 				case MenuItem.AddApartmentToHost:
 					_apartmentService.AddApartmentToHost();
 					break;
