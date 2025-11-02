@@ -2,12 +2,15 @@
 {
 	internal class Menu
 	{
-		private BookingService _bookingService;
+		private HostService _hostService;
+		private ApartmentService _apartmentService;
+
 		private int _choice;
 		
-		public Menu(BookingService bookingService)
+		public Menu(HostService hostService, ApartmentService apartmentService)
 		{
-			_bookingService = bookingService;
+			_hostService = hostService;
+			_apartmentService = apartmentService;
 		}
 		
 		public void ShowMenu()
@@ -39,23 +42,23 @@
 			switch ((MenuItem)_choice)
 			{
 				case MenuItem.AddHost:
-					_bookingService.AddHost();
+					_hostService.AddHost();
 					break;
 				case MenuItem.AddApartmentToHost:
-					_bookingService.AddApartmentToHost();
+					_apartmentService.AddApartmentToHost();
 					break;
 				case MenuItem.ShowAllHosts:
-					_bookingService.ShowHosts();
+					_hostService.ShowHosts();
 					break;
 				case MenuItem.ShowApartmentsByHostId:
-					_bookingService.ShowHosts();
-					if (_bookingService.HostsCount() == 0)
+					_hostService.ShowHosts();
+					if (_hostService.GetHostsCount() == 0)
 					{
 						break;
 					}
-					_bookingService.ShowApartmentByHostId(ConsoleInputReader.ReadIntValue(
+					_apartmentService.ShowApartmentsByHostId(ConsoleInputReader.ReadIntValue(
 						"Please, select host number: ",
-						v => v > 0 && v <= _bookingService.HostsCount(),
+						v => v > 0 && v <= _hostService.GetHostsCount(),
 						"Incorrect host number. Please reenter."
 					));
 					break;

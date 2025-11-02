@@ -1,6 +1,6 @@
 ﻿namespace ApartmentBookingApp
 {
-	internal class Host
+	public class Host
 	{
 		public int Id { get; set; }
 		public string FullName { get; set; }

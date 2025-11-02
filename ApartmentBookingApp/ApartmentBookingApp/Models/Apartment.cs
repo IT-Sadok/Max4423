@@ -1,6 +1,6 @@
 ﻿namespace ApartmentBookingApp
 {
-    internal class Apartment
+    public class Apartment
     {
         public int Id { get; set; }
         public string Title { get; set; }
