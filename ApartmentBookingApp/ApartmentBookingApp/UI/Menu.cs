@@ -1,23 +1,13 @@
 ﻿namespace ApartmentBookingApp
 {
-	internal class Menu
+	internal class Menu(
+		HostService hostService,
+		ApartmentService apartmentService,
+		IOutputWriter outputWriter,
+		IInputReader inputReader)
 	{
-		private HostService _hostService;
-		private ApartmentService _apartmentService;
-		private readonly IOutputWriter _outputWriter;
-		private readonly IInputReader _inputReader;
-
-
 		private int _choice;
-		
-		public Menu(HostService hostService, ApartmentService apartmentService, IOutputWriter outputWriter, IInputReader inputReader)
-		{
-			_hostService = hostService;
-			_apartmentService = apartmentService;
-			_outputWriter = outputWriter;
-			_inputReader = inputReader;
-		}
-		
+
 		public void GetUserChoice()
 		{
 			Console.Write("Enter your choice: ");
@@ -37,40 +27,40 @@
 			switch ((MenuItem)_choice)
 			{
 				case MenuItem.AddHost:
-					_hostService.AddHost();
+					hostService.AddHost();
 					break;
 				case MenuItem.UpdateHost:
-					_hostService.UpdateHost();
+					hostService.UpdateHost();
 					break;
 				case MenuItem.DeleteHost:
-					_hostService.DeleteHost();
+					hostService.DeleteHost();
 					break;
 				case MenuItem.AddApartmentToHost:
-					_apartmentService.AddApartmentToHost();
+					apartmentService.AddApartmentToHost();
 					break;
 				case MenuItem.ShowHostById:
-					if (_hostService.GetHostsCount() == 0)
+					if (hostService.GetHostsCount() == 0)
 					{
-						_outputWriter.ShowErrorMessage("Hosts list is empty!");
+						outputWriter.ShowErrorMessage("Hosts list is empty!");
 						break;
 					}
-					_hostService.ShowHostById(_inputReader.ReadIntValue(
-						$"Please, enter host number 1 - {_hostService.GetHostsCount()}: ",
-						v => v > 0 && v <= _hostService.GetHostsCount(),
+					hostService.ShowHostById(inputReader.ReadIntValue(
+						$"Please, enter host number 1 - {hostService.GetHostsCount()}: ",
+						v => v > 0 && v <= hostService.GetHostsCount(),
 						"Incorrect host number. Please reenter."));
 					break;
 				case MenuItem.ShowAllHosts:
-					_hostService.ShowHosts();
+					hostService.ShowHosts();
 					break;
 				case MenuItem.ShowApartmentsByHostId:
-					_hostService.ShowHosts();
-					if (_hostService.GetHostsCount() == 0)
+					hostService.ShowHosts();
+					if (hostService.GetHostsCount() == 0)
 					{
 						break;
 					}
-					_apartmentService.ShowApartmentsByHostId(_inputReader.ReadIntValue(
+					apartmentService.ShowApartmentsByHostId(inputReader.ReadIntValue(
 						"Please, select host number: ",
-						v => v > 0 && v <= _hostService.GetHostsCount(),
+						v => v > 0 && v <= hostService.GetHostsCount(),
 						"Incorrect host number. Please reenter."
 					));
 					break;
