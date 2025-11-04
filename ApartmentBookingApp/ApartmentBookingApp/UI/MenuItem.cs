@@ -6,6 +6,7 @@ public enum MenuItem
     UpdateHost,
     DeleteHost,
     AddApartmentToHost,
+    ShowHostById,
     ShowAllHosts,
     ShowApartmentsByHostId,
     Exit,

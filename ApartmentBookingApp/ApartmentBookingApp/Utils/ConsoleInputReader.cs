@@ -1,8 +1,8 @@
 ﻿namespace ApartmentBookingApp;
 
-public static class ConsoleInputReader
+public class ConsoleInputReader: IInputReader
 {
-    public static int ReadIntValue(string message, Func<int, bool> validator, string errorMessage)
+    public int ReadIntValue(string message, Func<int, bool> validator, string errorMessage)
     {
         while (true)
         {
@@ -13,7 +13,7 @@ public static class ConsoleInputReader
         }
     }
 
-    public static decimal ReadDecimalValue(string message, Func<decimal, bool> validator, string errorMessage)
+    public decimal ReadDecimalValue(string message, Func<decimal, bool> validator, string errorMessage)
     {
         while (true)
         {
@@ -24,7 +24,7 @@ public static class ConsoleInputReader
         }
     }
 
-    public static string ReadStringValue(string message, Func<string, bool> validator, string errorMessage)
+    public string ReadStringValue(string message, Func<string, bool> validator, string errorMessage)
     {
         while (true)
         {
@@ -36,7 +36,7 @@ public static class ConsoleInputReader
         }
     }
     
-    public static string ReadOptionalStringValue(string message, Func<string, bool> validator, string errorMessage)
+    public string ReadOptionalStringValue(string message, Func<string, bool> validator, string errorMessage)
     {
         while (true)
         {

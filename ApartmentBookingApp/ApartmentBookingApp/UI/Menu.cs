@@ -4,25 +4,20 @@
 	{
 		private HostService _hostService;
 		private ApartmentService _apartmentService;
+		private readonly IOutputWriter _outputWriter;
+		private readonly IInputReader _inputReader;
+
 
 		private int _choice;
 		
-		public Menu(HostService hostService, ApartmentService apartmentService)
+		public Menu(HostService hostService, ApartmentService apartmentService, IOutputWriter outputWriter, IInputReader inputReader)
 		{
 			_hostService = hostService;
 			_apartmentService = apartmentService;
+			_outputWriter = outputWriter;
+			_inputReader = inputReader;
 		}
 		
-		public void ShowMenu()
-		{
-			Console.Clear();
-			Console.WriteLine("Apartment booking menu");
-			foreach (MenuItem menuItem in Enum.GetValues(typeof(MenuItem)))
-			{
-				Console.WriteLine($"{(int)menuItem}. {menuItem}");
-			}
-		}
-
 		public void GetUserChoice()
 		{
 			Console.Write("Enter your choice: ");
@@ -53,6 +48,17 @@
 				case MenuItem.AddApartmentToHost:
 					_apartmentService.AddApartmentToHost();
 					break;
+				case MenuItem.ShowHostById:
+					if (_hostService.GetHostsCount() == 0)
+					{
+						_outputWriter.ShowErrorMessage("Hosts list is empty!");
+						break;
+					}
+					_hostService.ShowHostById(_inputReader.ReadIntValue(
+						$"Please, enter host number 1 - {_hostService.GetHostsCount()}: ",
+						v => v > 0 && v <= _hostService.GetHostsCount(),
+						"Incorrect host number. Please reenter."));
+					break;
 				case MenuItem.ShowAllHosts:
 					_hostService.ShowHosts();
 					break;
@@ -62,7 +68,7 @@
 					{
 						break;
 					}
-					_apartmentService.ShowApartmentsByHostId(ConsoleInputReader.ReadIntValue(
+					_apartmentService.ShowApartmentsByHostId(_inputReader.ReadIntValue(
 						"Please, select host number: ",
 						v => v > 0 && v <= _hostService.GetHostsCount(),
 						"Incorrect host number. Please reenter."
