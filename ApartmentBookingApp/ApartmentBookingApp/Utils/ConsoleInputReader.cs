@@ -1,8 +1,8 @@
 ﻿namespace ApartmentBookingApp;
 
-public static class InputHelper
+public class ConsoleInputReader: IInputReader
 {
-    public static int ReadIntValue(string message, Func<int, bool> validator, string errorMessage)
+    public int ReadIntValue(string message, Func<int, bool> validator, string errorMessage)
     {
         while (true)
         {
@@ -13,7 +13,7 @@ public static class InputHelper
         }
     }
 
-    public static decimal ReadDecimalValue(string message, Func<decimal, bool> validator, string errorMessage)
+    public decimal ReadDecimalValue(string message, Func<decimal, bool> validator, string errorMessage)
     {
         while (true)
         {
@@ -24,13 +24,27 @@ public static class InputHelper
         }
     }
 
-    public static string ReadStringValue(string message, Func<string, bool> validator, string errorMessage)
+    public string ReadStringValue(string message, Func<string, bool> validator, string errorMessage)
     {
         while (true)
         {
             Console.Write(message); 
             string value = Console.ReadLine();
             if (validator(value) && !string.IsNullOrEmpty(value))
+                return value;
+            Console.WriteLine(errorMessage);
+        }
+    }
+    
+    public string ReadOptionalStringValue(string message, Func<string, bool> validator, string errorMessage)
+    {
+        while (true)
+        {
+            Console.Write(message); 
+            string value = Console.ReadLine();
+            if (string.IsNullOrEmpty(value))
+                return null;
+            if (validator(value))
                 return value;
             Console.WriteLine(errorMessage);
         }
