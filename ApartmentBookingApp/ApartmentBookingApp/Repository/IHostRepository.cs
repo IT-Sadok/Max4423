@@ -9,5 +9,7 @@ public interface IHostRepository
     void DeleteHost(int hostId);
     int HostsCount();
     void SaveChanges();
+    int GetMaxHostId();
+    int GetMaxApartmentId();
 
 }

@@ -10,6 +10,7 @@ namespace ApartmentBookingApp
             var inputReader = new ConsoleInputReader();
             var hostRepository = new HostRepository();
             var idGenerator = new IdGeneratorService();
+            idGenerator.Initialize(hostRepository.GetMaxHostId(), hostRepository.GetMaxApartmentId());
             var hostService = new HostService(hostRepository, idGenerator, outputWriter, inputReader);
             var apartmentService = new ApartmentService(hostService, idGenerator, outputWriter, inputReader);
             var menu = new Menu(hostService, apartmentService, outputWriter, inputReader);

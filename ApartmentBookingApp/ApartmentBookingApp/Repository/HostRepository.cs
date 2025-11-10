@@ -85,4 +85,19 @@ public class HostRepository : IHostRepository
             writer.Write(json);
         }
     }
+
+    public int GetMaxHostId()
+    {
+        if (_hosts.Count <= 0)
+            return 0;
+        return _hosts.Max(x => x.Id);
+    }
+
+    public int GetMaxApartmentId()
+    {
+        var allApartments = _hosts.SelectMany(host => host.Apartments);
+        if (!allApartments.Any())
+            return 0;
+        return allApartments.Max(x => x.Id);
+    }
 }
