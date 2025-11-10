@@ -8,5 +8,6 @@ public interface IHostRepository
     void UpdateHost(Host hostToUpdate);
     void DeleteHost(int hostId);
     int HostsCount();
+    void SaveChanges();
 
 }

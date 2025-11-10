@@ -115,4 +115,9 @@ public class HostService(
         {
             return hostRepository.HostsCount();
         }
+
+        public void SaveChanges()
+        {
+            hostRepository.SaveChanges();
+        }
     }

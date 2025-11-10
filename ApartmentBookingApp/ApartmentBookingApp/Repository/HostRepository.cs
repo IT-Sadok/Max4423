@@ -1,8 +1,42 @@
-﻿namespace ApartmentBookingApp.Repository;
+﻿using System.Text.Json;
 
-public class HostRepository: IHostRepository
+namespace ApartmentBookingApp.Repository;
+
+public class HostRepository : IHostRepository
 {
-    private List<Host> _hosts = new List<Host>();
+    private const string FilePath = "hosts.json";
+    private List<Host> _hosts;
+
+    public HostRepository()
+    {
+        if (!File.Exists(FilePath))
+        {
+            _hosts = new List<Host>();
+            return;
+        }
+
+        string json;
+        using (StreamReader reader = new StreamReader(FilePath))
+        {
+            json = reader.ReadToEnd();
+        }
+
+        if (string.IsNullOrEmpty(json))
+        {
+            _hosts = new List<Host>();
+            return;
+        }
+
+        try
+        {
+            _hosts = JsonSerializer.Deserialize<List<Host>>(json) ?? throw new InvalidOperationException();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Cannot read from json file. Exception: " + e.Message);
+            _hosts = new List<Host>();
+        }
+    }
 
     public void AddHost(Host host)
     {
@@ -11,7 +45,7 @@ public class HostRepository: IHostRepository
 
     public Host GetHostById(int hostId)
     {
-        return _hosts.FirstOrDefault(x => x.Id == hostId);       
+        return _hosts.FirstOrDefault(x => x.Id == hostId);
     }
 
     public List<Host> GetAllHosts()
@@ -22,7 +56,7 @@ public class HostRepository: IHostRepository
     public void UpdateHost(Host hostToUpdate)
     {
         int index = _hosts.FindIndex(x => x.Id == hostToUpdate.Id);
-        
+
         if (index != -1)
             _hosts[index] = hostToUpdate;
     }
@@ -30,13 +64,25 @@ public class HostRepository: IHostRepository
     public void DeleteHost(int hostId)
     {
         var hostToRemove = GetHostById(hostId);
-        
+
         if (hostToRemove != null)
             _hosts.Remove(hostToRemove);
     }
-    
+
     public int HostsCount()
     {
         return _hosts.Count;
+    }
+    public void SaveChanges()
+    {
+        string json = JsonSerializer.Serialize(_hosts, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+
+        using (StreamWriter writer = new StreamWriter(FilePath))
+        {
+            writer.Write(json);
+        }
     }
 }

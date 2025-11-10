@@ -64,6 +64,11 @@
 						"Incorrect host number. Please reenter."
 					));
 					break;
+				case MenuItem.SaveChanges:
+					hostService.SaveChanges();
+					outputWriter.ShowSuccessMessage("Changes saved successfully!");
+
+					break;
 				case MenuItem.Exit:
 					Environment.Exit(0);
 					break;
