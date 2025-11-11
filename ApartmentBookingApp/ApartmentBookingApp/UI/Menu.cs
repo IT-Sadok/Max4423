@@ -1,4 +1,5 @@
-﻿namespace ApartmentBookingApp
+﻿// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+namespace ApartmentBookingApp
 {
 	internal class Menu(
 		HostService hostService,
@@ -44,10 +45,11 @@
 						outputWriter.ShowErrorMessage("Hosts list is empty!");
 						break;
 					}
+					hostService.ShowHosts();
 					hostService.ShowHostById(inputReader.ReadIntValue(
-						$"Please, enter host number 1 - {hostService.GetHostsCount()}: ",
-						v => v > 0 && v <= hostService.GetHostsCount(),
-						"Incorrect host number. Please reenter."));
+						$"Please, enter host id to show details: ",
+						v => hostService.GetHostById(v) != null,
+						"Incorrect host id. Please reenter."));
 					break;
 				case MenuItem.ShowAllHosts:
 					hostService.ShowHosts();
@@ -59,9 +61,9 @@
 						break;
 					}
 					apartmentService.ShowApartmentsByHostId(inputReader.ReadIntValue(
-						"Please, select host number: ",
-						v => v > 0 && v <= hostService.GetHostsCount(),
-						"Incorrect host number. Please reenter."
+						"Please, select host id to show apartments: ",
+						v => hostService.GetHostById(v) != null,
+						"Incorrect host id. Please reenter."
 					));
 					break;
 				case MenuItem.SaveChanges:
