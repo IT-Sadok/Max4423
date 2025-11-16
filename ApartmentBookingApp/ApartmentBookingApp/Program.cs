@@ -8,7 +8,7 @@ namespace ApartmentBookingApp
         {
             var outputWriter = new ConsoleOutputWriter();
             var inputReader = new ConsoleInputReader();
-            var hostRepository = new HostRepository();
+            var hostRepository = HostRepository.Create();
             var idGenerator = new IdGeneratorService();
             idGenerator.Initialize(hostRepository.GetMaxHostId(), hostRepository.GetMaxApartmentId());
             var hostService = new HostService(hostRepository, idGenerator, outputWriter, inputReader);

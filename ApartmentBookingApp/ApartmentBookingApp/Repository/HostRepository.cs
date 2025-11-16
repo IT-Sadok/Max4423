@@ -7,12 +7,16 @@ public class HostRepository : IHostRepository
     private const string FilePath = "hosts.json";
     private List<Host> _hosts;
 
-    public HostRepository()
+    private HostRepository(List<Host> hosts)
+    {
+        _hosts = hosts;
+    }
+
+    public static HostRepository Create()
     {
         if (!File.Exists(FilePath))
         {
-            _hosts = new List<Host>();
-            return;
+            return new HostRepository(new List<Host>());
         }
 
         string json;
@@ -23,18 +27,23 @@ public class HostRepository : IHostRepository
 
         if (string.IsNullOrEmpty(json))
         {
-            _hosts = new List<Host>();
-            return;
+            return new HostRepository(new List<Host>());
         }
 
         try
         {
-            _hosts = JsonSerializer.Deserialize<List<Host>>(json) ?? throw new InvalidOperationException();
+            var loadedHosts = JsonSerializer.Deserialize<List<Host>>(json);
+            if (loadedHosts == null)
+            {
+                return new HostRepository(new List<Host>());
+            }
+
+            return new HostRepository(loadedHosts);
         }
         catch (Exception e)
         {
             Console.WriteLine("Cannot read from json file. Exception: " + e.Message);
-            _hosts = new List<Host>();
+            return new HostRepository(new List<Host>());
         }
     }
 
@@ -73,6 +82,7 @@ public class HostRepository : IHostRepository
     {
         return _hosts.Count;
     }
+
     public void SaveChanges()
     {
         string json = JsonSerializer.Serialize(_hosts, new JsonSerializerOptions
