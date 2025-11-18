@@ -10,5 +10,6 @@ public enum MenuItem
     ShowAllHosts,
     ShowApartmentsByHostId,
     SaveChanges,
+    SimulateConcurrentPriceIncrease,
     Exit,
 }

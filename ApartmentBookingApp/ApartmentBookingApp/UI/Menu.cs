@@ -69,7 +69,9 @@ namespace ApartmentBookingApp
 				case MenuItem.SaveChanges:
 					hostService.SaveChanges();
 					outputWriter.ShowSuccessMessage("Changes saved successfully!");
-
+					break;
+				case MenuItem.SimulateConcurrentPriceIncrease:
+					apartmentService.SimulateConcurrentPriceIncrease(inputReader.ReadIntValue("Please, enter amount: ", v => v >= 0, "Please, enter positive amount."));
 					break;
 				case MenuItem.Exit:
 					Environment.Exit(0);

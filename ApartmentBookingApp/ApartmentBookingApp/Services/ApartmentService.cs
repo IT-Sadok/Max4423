@@ -65,5 +65,32 @@
 
             outputWriter.ShowApartmentsList(host);
         }
+
+        public void SimulateConcurrentPriceIncrease(int amount)
+        {
+            Host host1 = new Host() { Id = int.MaxValue - 1, FullName = "Host1", PhoneNumber = "123456789" };
+            Host host2 = new Host() { Id = int.MaxValue - 2, FullName = "Host2", PhoneNumber = "123456789" };
+
+            var sharedApartment = new Apartment()
+                { Id = int.MaxValue, Title = "shared apartment", PricePerNight = 100, Capacity = 2 };
+
+            host1.Apartments.Add(sharedApartment);
+            host2.Apartments.Add(sharedApartment);
+            outputWriter.ShowMessage($"Price of shared apartment before Tasks: {sharedApartment.PricePerNight}");
+
+            Task task1 = Task.Run(() => HostIncreasePrice(host1, sharedApartment, amount));
+            Task task2 = Task.Run(() => HostIncreasePrice(host2, sharedApartment, amount));
+
+            Task.WaitAll(task1, task2);
+            outputWriter.ShowMessage($"Price of shared apartment after Tasks {sharedApartment.PricePerNight}");
+        }
+
+        private void HostIncreasePrice(Host host, Apartment apartment, int amount)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                apartment.PricePerNight++;
+            }
+        }
     }
-} 
+}
