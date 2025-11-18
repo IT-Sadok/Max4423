@@ -53,10 +53,10 @@ public class HostService(
         }
 
         ShowHosts();
-        outputWriter.ShowMessage("Please, select host number: ");
+        outputWriter.ShowMessage("Please, select host id to update: ");
 
-        var hostToUpdate = GetHostById(inputReader.ReadIntValue("Enter host number: ", v => v > 0,
-            "Incorrect host number. Please reenter."));
+        var hostToUpdate = GetHostById(inputReader.ReadIntValue("Enter host id: ", v => GetHostById(v) != null,
+            "Incorrect host id. Please reenter."));
         if (hostToUpdate == null)
         {
             outputWriter.ShowErrorMessage("Host not found!");
@@ -88,10 +88,10 @@ public class HostService(
             }
 
             ShowHosts();
-            outputWriter.ShowMessage("Please, select host number: ");
+            outputWriter.ShowMessage("Please, select host id to delete: ");
 
-            var hostToDelete = GetHostById(inputReader.ReadIntValue("Enter host number: ", v => v > 0,
-                "Incorrect host number. Please reenter."));
+            var hostToDelete = GetHostById(inputReader.ReadIntValue("Enter host id: ", v => GetHostById(v) != null,
+                "Incorrect host id. Please reenter."));
             if (hostToDelete == null)
             {
                 outputWriter.ShowErrorMessage("Host not found!");
@@ -114,5 +114,10 @@ public class HostService(
         public int GetHostsCount()
         {
             return hostRepository.HostsCount();
+        }
+
+        public void SaveChanges()
+        {
+            hostRepository.SaveChanges();
         }
     }

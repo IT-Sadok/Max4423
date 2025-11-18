@@ -14,11 +14,10 @@ public class ConsoleOutputWriter: IOutputWriter
 
     public void ShowHostsList(List<Host> hosts)
     {
-        for (int i = 0; i < hosts.Count; i++)
+        foreach (var host in hosts)
         {
-            var host = hosts[i];
             Console.WriteLine(
-                $"[{i + 1}]. Id: {host.Id} | FullName: {host.FullName} | PhoneNumber: {host.PhoneNumber}");
+                $"# Id: {host.Id} | FullName: {host.FullName} | PhoneNumber: {host.PhoneNumber}");
         }
     }
 
@@ -28,7 +27,7 @@ public class ConsoleOutputWriter: IOutputWriter
         {
             var apartment = host.Apartments[i];
             Console.WriteLine(
-                $"{i + 1}. Id: {apartment.Id} | Title: {apartment.Title} | PricePerNight: {apartment.PricePerNight} | Capacity: {apartment.Capacity}");
+                $"# Id: {apartment.Id} | Title: {apartment.Title} | PricePerNight: {apartment.PricePerNight} | Capacity: {apartment.Capacity}");
         }
     }
 
@@ -49,15 +48,5 @@ public class ConsoleOutputWriter: IOutputWriter
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(message);
         Console.ResetColor();
-    }
-
-    public void Clear()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void WaitForKeyPress()
-    {
-        throw new NotImplementedException();
     }
 }

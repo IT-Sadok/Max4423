@@ -9,5 +9,6 @@ public enum MenuItem
     ShowHostById,
     ShowAllHosts,
     ShowApartmentsByHostId,
+    SaveChanges,
     Exit,
 }
