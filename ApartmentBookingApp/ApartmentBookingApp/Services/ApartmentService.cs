@@ -78,18 +78,24 @@
             host2.Apartments.Add(sharedApartment);
             outputWriter.ShowMessage($"Price of shared apartment before Tasks: {sharedApartment.PricePerNight}");
 
-            Task task1 = Task.Run(() => HostIncreasePrice(host1, sharedApartment, amount));
-            Task task2 = Task.Run(() => HostIncreasePrice(host2, sharedApartment, amount));
+            Task task1 = Task.Run(() => HostIncreasePrice(sharedApartment, amount));
+            Task task2 = Task.Run(() => HostIncreasePrice(sharedApartment, amount));
 
             Task.WaitAll(task1, task2);
             outputWriter.ShowMessage($"Price of shared apartment after Tasks {sharedApartment.PricePerNight}");
         }
 
-        private void HostIncreasePrice(Host host, Apartment apartment, int amount)
+        private readonly object _priceLock = new object();
+
+        private void HostIncreasePrice(Apartment apartment, int amount)
         {
             for (int i = 0; i < amount; i++)
             {
-                apartment.PricePerNight++;
+                lock (_priceLock)
+                {
+                    apartment.PricePerNight++;
+                }
+                //var x = Interlocked.Exchange(ref apartment.PricePerNight, apartment.PricePerNight + 1);
             }
         }
     }
