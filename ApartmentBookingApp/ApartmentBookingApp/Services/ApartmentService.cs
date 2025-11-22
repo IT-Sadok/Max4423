@@ -85,17 +85,21 @@
             outputWriter.ShowMessage($"Price of shared apartment after Tasks {sharedApartment.PricePerNight}");
         }
 
-        private readonly object _priceLock = new object();
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         private void HostIncreasePrice(Apartment apartment, int amount)
         {
             for (int i = 0; i < amount; i++)
             {
-                lock (_priceLock)
+                _semaphore.Wait();
+                try
                 {
                     apartment.PricePerNight++;
                 }
-                //var x = Interlocked.Exchange(ref apartment.PricePerNight, apartment.PricePerNight + 1);
+                finally
+                {
+                    _semaphore.Release();
+                }
             }
         }
     }
