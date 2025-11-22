@@ -14,19 +14,14 @@
                 outputWriter.ShowErrorMessage("Hosts list is empty!");
                 return;
             }
-
-            int hostNumber;
-
+            
             hostService.ShowHosts();
-            outputWriter.ShowMessage($"Please, select host number(1 - {hostService.GetHostsCount()}): ");
-            while (true)
-            {
-                if ((int.TryParse(Console.ReadLine(), out hostNumber) && hostNumber > 0 &&
-                     hostNumber <= hostService.GetHostsCount()))
-                    break;
-
-                outputWriter.ShowErrorMessage("Incorrect host number. Please reenter.");
-            }
+            int hostId = inputReader.ReadIntValue(
+                "Please, select host ID: ",
+                id => hostService.GetHostById(id) != null,
+                "Host with this ID does not exist. Please reenter."
+            );
+            var host = hostService.GetHostById(hostId);
 
             var title = inputReader.ReadStringValue("Enter apartment Title: ", v => v.Length > 0,
                 "Title cannot be null or empty.");
@@ -37,8 +32,7 @@
             var capacity = inputReader.ReadIntValue("Enter apartment capacity: ", v => v > 0,
                 "Invalid apartment capacity. Please enter positive integer value.");
 
-            var hosts = hostService.GetAllHosts();
-            hosts[hostNumber - 1].Apartments.Add(new Apartment()
+            host.Apartments.Add(new Apartment()
             {
                 Id = idGeneratorService.GetNextApartmentId(),
                 Title = title,
