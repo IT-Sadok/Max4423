@@ -49,7 +49,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Guid>
         {
             throw new Exception($"Creating user failed. Error: {errors}");
         }
-        await _userManager.AddToRoleAsync(newUser, UserRole.Client.ToString());
+        await _userManager.AddToRoleAsync(newUser, Roles.Client);
         return newUser.Id;
     }   
 }
