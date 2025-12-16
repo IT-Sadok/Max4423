@@ -1,4 +1,5 @@
-﻿using BookingSystem.Application.Features.Auth.Commands.RegisterUser;
+﻿using BookingSystem.Application.Features.Auth.Commands.LoginUser;
+using BookingSystem.Application.Features.Auth.Commands.RegisterUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,13 @@ public class AuthController:ControllerBase
         var userId = await _mediator.Send(command);
         
         return Ok(userId);
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginUserCommand command)
+    {
+        var token = await _mediator.Send(command);
+        return Ok(new { Token = token });
     }
 
 }

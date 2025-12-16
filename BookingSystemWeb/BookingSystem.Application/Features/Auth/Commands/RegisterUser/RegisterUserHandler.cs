@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BookingSystem.Application.Features.Auth.Commands.RegisterUser;
 
-public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Guid>
+public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Guid>
 {
     private readonly UserManager<User> _userManager;
     private readonly IValidator<RegisterUserCommand> _validator;
 
-    public RegisterUserCommandHandler(UserManager<User> userManager,IValidator<RegisterUserCommand> validator)
+    public RegisterUserHandler(UserManager<User> userManager,IValidator<RegisterUserCommand> validator)
     {
         _userManager = userManager;
         _validator = validator;
@@ -49,7 +49,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
         {
             throw new Exception($"Creating user failed. Error: {errors}");
         }
-        
+        await _userManager.AddToRoleAsync(newUser, UserRole.Client.ToString());
         return newUser.Id;
     }   
 }
