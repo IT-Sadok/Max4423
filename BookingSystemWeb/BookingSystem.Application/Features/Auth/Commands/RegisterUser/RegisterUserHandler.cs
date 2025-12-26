@@ -1,55 +1,39 @@
-﻿using BookingSystem.Domain;
+﻿using BookingSystem.Application.Common.Interfaces.Authentication;
+using BookingSystem.Domain;
 using MediatR;
-using FluentValidation;
+using BookingSystem.Domain;
 using Microsoft.AspNetCore.Identity;
 
 namespace BookingSystem.Application.Features.Auth.Commands.RegisterUser;
 
 public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Guid>
 {
-    private readonly UserManager<User> _userManager;
-    private readonly IValidator<RegisterUserCommand> _validator;
-
-    public RegisterUserHandler(UserManager<User> userManager,IValidator<RegisterUserCommand> validator)
+    private readonly IIdentityService _identityService;
+    public RegisterUserHandler(IIdentityService identityService)
     {
-        _userManager = userManager;
-        _validator = validator;
+        _identityService = identityService;
     }
 
     public async Task<Guid> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
-        
-        if (!validationResult.IsValid)
-        {
-            var error = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
-            throw new Exception($"Validation failed: {error}");
-        }
-        var existingUser = await _userManager.FindByEmailAsync(request.Email);
-
-        if (existingUser != null)
+        if (!await _identityService.IsEmailUniqueAsync(request.Email))
         {
             throw new Exception("User with this email is already registered.");
         }
 
-        var newUser = new User
-        {
-            Id = Guid.NewGuid(),
-            Email = request.Email,
-            UserName = request.Email,
-            FirstName = request.FirstName,
-            LastName = request.LastName
-        };
+        var (success, userId, errorMessage) = await _identityService.CreateUserAsync(
+            request.Email,
+            request.Password,
+            request.FirstName,
+            request.LastName,
+            Roles.Client.ToString()
+        );
 
-        var result = await _userManager.CreateAsync(newUser, request.Password);
-
-        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-        
-        if (!result.Succeeded)
+        if (!success)
         {
-            throw new Exception($"Creating user failed. Error: {errors}");
+            throw new Exception($"Registration failed: {errorMessage}");
         }
-        await _userManager.AddToRoleAsync(newUser, Roles.Client);
-        return newUser.Id;
+
+        return userId;
     }   
 }
