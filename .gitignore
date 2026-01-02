@@ -484,3 +484,6 @@ $RECYCLE.BIN/
 *.swp
 
 /.idea/
+
+appsettings.json
+appsettings.Development.json
