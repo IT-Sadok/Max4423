@@ -1,4 +1,6 @@
-﻿using BookingSystem.Domain;
+﻿using System.Reflection;
+using BookingSystem.Domain;
+using BookingSystem.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +13,12 @@ public class ApplicationDbContext: IdentityDbContext<User, IdentityRole<Guid>, G
     {
     }
 
+    public DbSet<Apartment> Apartments { get; set; }
+    public DbSet<Booking> Bookings { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);  
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }
