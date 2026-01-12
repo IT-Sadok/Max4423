@@ -5,12 +5,12 @@ using MediatR;
 
 namespace BookingSystem.Application.Features.Auth.Commands.LoginUser;
 
-public class LoginUserHandler : IRequestHandler<LoginUserCommand, Result<string>>
+public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Result<string>>
 {
     private readonly IIdentityService _identityService;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
-    public LoginUserHandler(IIdentityService identityService, IJwtTokenGenerator jwtTokenGenerator)
+    public LoginUserCommandHandler(IIdentityService identityService, IJwtTokenGenerator jwtTokenGenerator)
     {
         _identityService = identityService;
         _jwtTokenGenerator = jwtTokenGenerator;

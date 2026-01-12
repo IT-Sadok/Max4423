@@ -32,6 +32,8 @@ public static class DependencyInjection
                         Encoding.UTF8.GetBytes(jwtSettings.Key))
                 };
             });
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         return services;
     }

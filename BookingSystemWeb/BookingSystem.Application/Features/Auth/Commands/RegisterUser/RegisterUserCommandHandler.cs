@@ -5,11 +5,11 @@ using MediatR;
 
 namespace BookingSystem.Application.Features.Auth.Commands.RegisterUser;
 
-public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Result<Guid>>
+public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Result<Guid>>
 {
     private readonly IIdentityService _identityService;
 
-    public RegisterUserHandler(IIdentityService identityService)
+    public RegisterUserCommandHandler(IIdentityService identityService)
     {
         _identityService = identityService;
     }
