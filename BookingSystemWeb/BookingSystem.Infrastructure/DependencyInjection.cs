@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using BookingSystem.Infrastructure.Common.Mapping;
+using Mapster;
+using MapsterMapper;
 
 namespace BookingSystem.Infrastructure;
 
@@ -34,7 +37,10 @@ public static class DependencyInjection
             });
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-
+        services.RegisterMapsterConfiguration();
+        services.AddSingleton(TypeAdapterConfig.GlobalSettings);
+        services.AddScoped<IMapper, ServiceMapper>();
+        
         return services;
     }
 }
