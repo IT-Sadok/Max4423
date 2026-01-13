@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BookingSystem.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/bookings")]
 [ApiController]
 public class BookingsController: ControllerBase
 {
@@ -18,7 +18,8 @@ public class BookingsController: ControllerBase
     }
 
     [HttpPost]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]    public async Task<IActionResult> Create(CreateBookingCommand command)
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]    
+    public async Task<IActionResult> Create(CreateBookingCommand command)
     {
         var result = await _mediator.Send(command);
         if (result.IsSuccess)
