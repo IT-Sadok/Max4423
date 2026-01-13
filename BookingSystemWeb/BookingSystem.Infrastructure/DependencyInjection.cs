@@ -6,8 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using BookingSystem.Infrastructure.Common.Mapping;
+using BookingSystem.Application.Common.Interfaces.Data;
 using Mapster;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookingSystem.Infrastructure;
 
@@ -41,6 +43,12 @@ public static class DependencyInjection
         services.AddSingleton(TypeAdapterConfig.GlobalSettings);
         services.AddScoped<IMapper, ServiceMapper>();
         
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(connectionString));
+        services.AddScoped<IApplicationDbContext>(provider => 
+            provider.GetRequiredService<ApplicationDbContext>());
         return services;
     }
 }
