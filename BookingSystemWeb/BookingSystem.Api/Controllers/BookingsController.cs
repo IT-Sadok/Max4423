@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using BookingSystem.Application.Features.Bookings.Commands;
+using BookingSystem.Application.Features.Bookings.Commands.CreateBooking;
+using BookingSystem.Application.Features.Bookings.Queries.GetMyBookings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
@@ -29,4 +31,18 @@ public class BookingsController: ControllerBase
 
         return BadRequest(new { Error = result.ErrorMessage });
     }
+
+    [HttpGet]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> GetMyBookings()
+    {
+        var query = new GetMyBookingsQuery();
+        var result = await _mediator.Send(query);
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+        return BadRequest(new { Error = result.ErrorMessage });
+    }
+
 }

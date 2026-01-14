@@ -1,7 +1,7 @@
 ﻿using BookingSystem.Domain.Common;
 using MediatR;
 
-namespace BookingSystem.Application.Features.Bookings.Commands;
+namespace BookingSystem.Application.Features.Bookings.Commands.CreateBooking;
 
 public class CreateBookingCommand : IRequest<Result<Guid>>
 {

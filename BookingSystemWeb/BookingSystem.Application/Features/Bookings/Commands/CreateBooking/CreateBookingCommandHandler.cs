@@ -5,7 +5,7 @@ using BookingSystem.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookingSystem.Application.Features.Bookings.Commands;
+namespace BookingSystem.Application.Features.Bookings.Commands.CreateBooking;
 
 public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, Result<Guid>>
 {
