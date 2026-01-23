@@ -2,11 +2,30 @@
 
 public class Apartment
 {
-    public Guid Id { get; set; }
-    public Guid HostId { get; set; }
-    public User Host { get; set; } = null!;
-    public string Title { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public string Address  { get; set; } = string.Empty;
-    public decimal PricePerNight { get; set; }
+    public Guid Id { get; private set; }
+    public Guid HostId { get; private set; }
+    public User Host { get; private set; } = null!;
+    public string Title { get; private set; } = string.Empty;
+    public string Description { get; private set; } = string.Empty;
+    public string Address { get; private set; } = string.Empty;
+    public decimal PricePerNight { get; private set; }
+
+    public Apartment(Guid hostId, string title, string description, string address, decimal pricePerNight)
+    {
+        Id = Guid.NewGuid();
+        HostId = hostId;
+        Title = title;
+        Description = description;
+        Address = address;
+        PricePerNight = pricePerNight;
+    }
+
+    private Apartment()
+    {
+    }
+
+    public Booking Reserve(Guid userId, DateTime start, DateTime end)
+    {
+        return new Booking(this, userId, start, end);
+    }
 }

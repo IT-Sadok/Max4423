@@ -38,28 +38,24 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         {
             return Result<Guid>.Failure("Apartment not found.");
         }
-        
+
         var isOverlapping = await _bookingRepository.IsOverlappingAsync(
-            request.ApartmentId, 
-            request.CheckInDate, 
-            request.CheckOutDate, 
+            request.ApartmentId,
+            request.CheckInDate,
+            request.CheckOutDate,
             cancellationToken);
 
         if (isOverlapping)
         {
             return Result<Guid>.Failure("These dates are already booked");
         }
-        
-        var booking = Booking.Reserve(
-            apartment, 
-            userId.Value, 
-            request.CheckInDate, 
-            request.CheckOutDate);
-        
+
+        var booking = apartment.Reserve(userId.Value, request.CheckInDate, request.CheckOutDate);
+
         _bookingRepository.Add(booking);
-        
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        
+
         return Result<Guid>.Success(booking.Id);
     }
 }
