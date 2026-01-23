@@ -5,7 +5,7 @@ using BookingSystem.Domain.Entities;
 using Mapster;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BookingSystem.Infrastructure.Common.Mapping;
+namespace BookingSystem.Application.Common.Mapping;
 
 public static class MapsterConfig
 {

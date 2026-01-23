@@ -1,6 +1,9 @@
 ﻿using System.Reflection;
 using BookingSystem.Application.Common.Behaviors;
+using BookingSystem.Application.Common.Mapping;
 using FluentValidation;
+using Mapster;
+using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +20,9 @@ public static class DependencyInjection
         cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         });
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.RegisterMapsterConfiguration();
+        services.AddSingleton(TypeAdapterConfig.GlobalSettings);
+        services.AddScoped<IMapper, ServiceMapper>();
         return services;
     }
 }
