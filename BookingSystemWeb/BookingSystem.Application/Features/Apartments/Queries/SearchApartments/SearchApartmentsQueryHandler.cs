@@ -5,7 +5,7 @@ using MediatR;
 
 namespace BookingSystem.Application.Features.Apartments.Queries.SearchApartments;
 
-public class SearchApartmentsQueryHandler : IRequestHandler<SearchApartmentsQuery, Result<List<ApartmentDto>>>
+public class SearchApartmentsQueryHandler : IRequestHandler<SearchApartmentsQuery, Result<PaginatedList<ApartmentDto>>>
 {
     private readonly IApartmentRepository _apartmentRepository;
     private readonly IMapper _mapper;
@@ -16,15 +16,23 @@ public class SearchApartmentsQueryHandler : IRequestHandler<SearchApartmentsQuer
         _mapper = mapper;
     }
 
-    public async Task<Result<List<ApartmentDto>>> Handle(SearchApartmentsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedList<ApartmentDto>>> Handle(SearchApartmentsQuery request, CancellationToken cancellationToken)
     {
-        var apartments = await _apartmentRepository.SearchAvailableAsync(
+        var paginatedApartments = await _apartmentRepository.SearchAvailableAsync(
             request.CheckInDate, 
             request.CheckOutDate, 
+            request.PageNumber,
+            request.PageSize,
             cancellationToken);
 
-        var apartmentsDto = _mapper.Map<List<ApartmentDto>>(apartments);
+        var apartmentDtos = _mapper.Map<List<ApartmentDto>>(paginatedApartments.Items);
+        
+        var result = new PaginatedList<ApartmentDto>(
+            apartmentDtos, 
+            paginatedApartments.TotalCount, 
+            paginatedApartments.PageNumber, 
+            request.PageSize);
 
-        return Result<List<ApartmentDto>>.Success(apartmentsDto);
+        return Result<PaginatedList<ApartmentDto>>.Success(result);
     }
 }

@@ -1,4 +1,5 @@
-﻿using BookingSystem.Domain.Entities;
+﻿using BookingSystem.Domain.Common;
+using BookingSystem.Domain.Entities;
 using BookingSystem.Domain.Repositories;
 using BookingSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,12 @@ public class ApartmentRepository : IApartmentRepository
             .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
     }
 
-    public async Task<List<Apartment>> SearchAvailableAsync(DateTime? start, DateTime? end, CancellationToken cancellationToken = default)
+    public async Task<PaginatedList<Apartment>> SearchAvailableAsync(
+        DateTime? start, 
+        DateTime? end, 
+        int pageNumber, 
+        int pageSize, 
+        CancellationToken cancellationToken = default)
     {
         var query = _context.Apartments
             .Include(a => a.Host)
@@ -33,10 +39,17 @@ public class ApartmentRepository : IApartmentRepository
             var bookedApartmentIds = _context.Bookings
                 .Where(b => b.CheckInDate < end && b.CheckOutDate > start)
                 .Select(b => b.ApartmentId);
-            
+        
             query = query.Where(a => !bookedApartmentIds.Contains(a.Id));
         }
 
-        return await query.ToListAsync(cancellationToken);
+        var count = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedList<Apartment>(items, count, pageNumber, pageSize);
     }
 }
