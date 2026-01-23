@@ -1,20 +1,27 @@
 ﻿using BookingSystem.Application.Common.Interfaces.Authentication;
-using BookingSystem.Application.Common.Interfaces.Data;
 using BookingSystem.Domain.Common;
 using BookingSystem.Domain.Entities;
+using BookingSystem.Domain.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookingSystem.Application.Features.Bookings.Commands.CreateBooking;
 
 public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, Result<Guid>>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IApartmentRepository _apartmentRepository;
+    private readonly IBookingRepository _bookingRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUserService _currentUserService;
 
-    public CreateBookingCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
+    public CreateBookingCommandHandler(
+        IApartmentRepository apartmentRepository,
+        IBookingRepository bookingRepository,
+        IUnitOfWork unitOfWork,
+        ICurrentUserService currentUserService)
     {
-        _context = context;
+        _apartmentRepository = apartmentRepository;
+        _bookingRepository = bookingRepository;
+        _unitOfWork = unitOfWork;
         _currentUserService = currentUserService;
     }
 
@@ -26,19 +33,17 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
             return Result<Guid>.Failure("User not found.");
         }
 
-        var apartment = await _context.Apartments
-            .FirstOrDefaultAsync(a => a.Id == request.ApartmentId, cancellationToken);
+        var apartment = await _apartmentRepository.GetByIdAsync(request.ApartmentId, cancellationToken);
         if (apartment == null)
         {
             return Result<Guid>.Failure("Apartment not found.");
         }
-
-        var isOverlapping = await _context.Bookings
-            .AnyAsync(b =>
-                    b.ApartmentId == request.ApartmentId &&
-                    b.CheckInDate < request.CheckOutDate &&
-                    b.CheckOutDate > request.CheckInDate,
-                cancellationToken);
+        
+        var isOverlapping = await _bookingRepository.IsOverlappingAsync(
+            request.ApartmentId, 
+            request.CheckInDate, 
+            request.CheckOutDate, 
+            cancellationToken);
 
         if (isOverlapping)
         {
@@ -51,8 +56,10 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
             request.CheckInDate, 
             request.CheckOutDate);
         
-        _context.Bookings.Add(booking);
-        await _context.SaveChangesAsync(cancellationToken);
+        _bookingRepository.Add(booking);
+        
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        
         return Result<Guid>.Success(booking.Id);
     }
 }

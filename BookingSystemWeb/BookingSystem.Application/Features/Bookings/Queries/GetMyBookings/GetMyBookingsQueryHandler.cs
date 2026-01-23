@@ -1,24 +1,27 @@
 ﻿using BookingSystem.Application.Common.Interfaces.Authentication;
-using BookingSystem.Application.Common.Interfaces.Data;
 using BookingSystem.Domain.Common;
+using BookingSystem.Domain.Repositories;
 using MapsterMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookingSystem.Application.Features.Bookings.Queries.GetMyBookings;
 
-public class GetMyBookingsQueryHandler: IRequestHandler<GetMyBookingsQuery,Result<List<BookingDto>>>
+public class GetMyBookingsQueryHandler : IRequestHandler<GetMyBookingsQuery, Result<List<BookingDto>>>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IBookingRepository _bookingRepository;
     private readonly ICurrentUserService _currentUserService;
     private readonly IMapper _mapper;
 
-    public GetMyBookingsQueryHandler(IApplicationDbContext context, ICurrentUserService currentUserService, IMapper mapper)
+    public GetMyBookingsQueryHandler(
+        IBookingRepository bookingRepository, 
+        ICurrentUserService currentUserService, 
+        IMapper mapper)
     {
-        _context = context;
+        _bookingRepository = bookingRepository;
         _currentUserService = currentUserService;
         _mapper = mapper;
     }
+
     public async Task<Result<List<BookingDto>>> Handle(GetMyBookingsQuery request, CancellationToken cancellationToken)
     {
         var userId = _currentUserService.UserId;
@@ -28,12 +31,7 @@ public class GetMyBookingsQueryHandler: IRequestHandler<GetMyBookingsQuery,Resul
             return Result<List<BookingDto>>.Failure("User is not authorized");
         }
         
-        var bookings = await _context.Bookings
-            .Include(b => b.Apartment)
-            .Where(b => b.UserId == userId)
-            .AsNoTracking()
-            .OrderByDescending(b => b.CheckInDate)
-            .ToListAsync(cancellationToken);
+        var bookings = await _bookingRepository.GetByUserIdAsync(userId.Value, cancellationToken);
         
         var bookingsDto = _mapper.Map<List<BookingDto>>(bookings);
 

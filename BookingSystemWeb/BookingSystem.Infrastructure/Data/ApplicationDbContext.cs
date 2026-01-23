@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using BookingSystem.Application.Common.Interfaces.Data;
 using BookingSystem.Domain;
 using BookingSystem.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookingSystem.Infrastructure;
 
-public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>, IApplicationDbContext
+public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
