@@ -1,6 +1,5 @@
 ﻿using BookingSystem.Domain.Common;
 using MediatR;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace BookingSystem.Application.Features.Apartments.Queries.SearchApartments;
 

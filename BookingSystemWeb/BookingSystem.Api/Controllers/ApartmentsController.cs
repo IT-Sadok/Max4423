@@ -1,5 +1,4 @@
 ﻿using BookingSystem.Application.Features.Apartments.Queries.SearchApartments;
-using BookingSystem.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

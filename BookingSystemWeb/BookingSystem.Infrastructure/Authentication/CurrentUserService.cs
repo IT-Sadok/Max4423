@@ -17,20 +17,14 @@ public class CurrentUserService : ICurrentUserService
     {
         get
         {
-            var user = _httpContextAccessor.HttpContext?.User;
-            if (user == null)
-            {
-                return null;
-            }
-            var idClaim = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            var idClaim = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (string.IsNullOrEmpty(idClaim))
+            if (Guid.TryParse(idClaim, out var userId))
             {
-                return null;
+                return userId;
             }
 
-            return Guid.Parse(idClaim);
+            return null;
         }
-        
     }
 }
