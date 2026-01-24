@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 namespace BookingSystem.Application.Features.Auth.Commands.RegisterUser;
 
-public class RegisterUserValidator : AbstractValidator<RegisterUserCommand>
+public class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
 {
-    public RegisterUserValidator()
+    public RegisterUserCommandValidator()
     {
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email cannot be empty.")

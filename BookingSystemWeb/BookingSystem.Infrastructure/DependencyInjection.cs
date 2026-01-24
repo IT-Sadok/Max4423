@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using BookingSystem.Domain.Repositories;
+using BookingSystem.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookingSystem.Infrastructure;
 
@@ -32,7 +35,17 @@ public static class DependencyInjection
                         Encoding.UTF8.GetBytes(jwtSettings.Key))
                 };
             });
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        
+        services.AddScoped<IApartmentRepository, ApartmentRepository>();
+        services.AddScoped<IBookingRepository, BookingRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
 
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(connectionString));
         return services;
     }
 }
