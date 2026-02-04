@@ -11,7 +11,7 @@ public class Apartment
     public decimal PricePerNight { get; private set; }
     public string? ExternalId { get; set; }
     
-    public Apartment(Guid hostId, string title, string description, string address, decimal pricePerNight)
+    public Apartment(Guid hostId, string title, string description, string address, decimal pricePerNight, string externalId)
     {
         Id = Guid.NewGuid();
         HostId = hostId;
@@ -19,6 +19,7 @@ public class Apartment
         Description = description;
         Address = address;
         PricePerNight = pricePerNight;
+        ExternalId = externalId;
     }
 
     private Apartment()

@@ -1,11 +1,13 @@
 ﻿using System.Text;
 using BookingSystem.Application.Common.Interfaces.Authentication;
+using BookingSystem.Application.Common.Interfaces.ImportData;
 using BookingSystem.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using BookingSystem.Domain.Repositories;
+using BookingSystem.Infrastructure.ImportData;
 using BookingSystem.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,6 +48,8 @@ public static class DependencyInjection
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
+        
+        services.AddScoped<IImportService, ImportService>();
         return services;
     }
 }
