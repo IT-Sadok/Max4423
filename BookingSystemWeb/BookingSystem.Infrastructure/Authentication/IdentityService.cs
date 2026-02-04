@@ -8,10 +8,12 @@ namespace BookingSystem.Infrastructure.Authentication;
 public class IdentityService : IIdentityService
 {
     private readonly UserManager<User> _userManager;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
-    public IdentityService(UserManager<User> userManager)
+    public IdentityService(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     public async Task<bool> IsEmailUniqueAsync(string email)
@@ -40,6 +42,15 @@ public class IdentityService : IIdentityService
             return Result<Guid>.Failure($"Registration failed: {errors}");
         }
 
+        if (!await _roleManager.RoleExistsAsync(role))
+        {
+            var createRoleResult = await _roleManager.CreateAsync(new IdentityRole<Guid>(role));
+            if (!createRoleResult.Succeeded)
+            {
+                return Result<Guid>.Failure("Failed to create role in database.");
+            }
+        }
+        
         var roleResult = await _userManager.AddToRoleAsync(user, role);
 
         if (!roleResult.Succeeded)
