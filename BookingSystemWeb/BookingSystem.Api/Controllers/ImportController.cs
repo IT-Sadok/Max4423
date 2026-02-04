@@ -1,7 +1,7 @@
-﻿using BookingSystem.Application.Common.Interfaces.ImportData;
-using BookingSystem.Application.Features.Import;
+﻿using BookingSystem.Application.Features.Import;
 using BookingSystem.Domain;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +9,7 @@ namespace BookingSystem.Api.Controllers;
 
 [Route("api/users/import")]
 [ApiController]
-//[Authorize(Roles = Roles.Admin)]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.Admin)]
 public class ImportController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -24,7 +24,7 @@ public class ImportController : ControllerBase
     [RequestFormLimits(MultipartBodyLengthLimit = long.MaxValue)]
     public async Task<IActionResult> ImportData(IFormFile file, CancellationToken cancellationToken)
     {
-        if (file == null || file.Length == 0)
+        if (file.Length == 0)
         {
             return BadRequest("File is empty.");
         }

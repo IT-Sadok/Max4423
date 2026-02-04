@@ -32,7 +32,7 @@ public class BookingsController: ControllerBase
         return BadRequest(new { Error = result.ErrorMessage });
     }
 
-    [HttpGet]
+    [HttpGet("my")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetMyBookings()
     {
