@@ -5,6 +5,7 @@ using BookingSystem.Domain;
 using BookingSystem.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BookingSystem.Infrastructure.ImportData;
 
@@ -12,18 +13,22 @@ public class ImportService : IImportService
 {
     private readonly ApplicationDbContext _context;
     private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly ILogger<ImportService> _logger;
     private const int BatchSize = 200;
 
-    public ImportService(ApplicationDbContext context, IPasswordHasher<User> passwordHasher)
+    public ImportService(ApplicationDbContext context, IPasswordHasher<User> passwordHasher, ILogger<ImportService> logger)
     {
         _context = context;
         _passwordHasher = passwordHasher;
+        _logger = logger;
     }
 
     public async Task ImportDataAsync(Stream fileStream, string fileName, CancellationToken cancellationToken)
     {
         long currentFileSize = fileStream.Length;
 
+        _logger.LogInformation("Starting import for file '{FileName}'. Size: {Size} bytes", fileName, currentFileSize);
+        
         var progress = await _context.ImportProgresses
             .FirstOrDefaultAsync(p => p.FileName == fileName, cancellationToken);
 
@@ -31,6 +36,7 @@ public class ImportService : IImportService
 
         if (progress == null)
         {
+            _logger.LogInformation("New file detected. Creating tracking record.");
             progress = new ImportProgress
                 { FileName = fileName, TotalBytes = currentFileSize, UpdatedAt = DateTime.UtcNow };
             _context.ImportProgresses.Add(progress);
@@ -41,6 +47,8 @@ public class ImportService : IImportService
         {
             if (progress.TotalBytes != currentFileSize || progress.IsCompleted)
             {
+                _logger.LogWarning("File changed or was previously completed. Resetting progress for '{FileName}'", fileName);
+                
                 progress.LastProcessedExternalId = null;
                 progress.ProcessedCount = 0;
                 progress.TotalBytes = currentFileSize;
@@ -52,6 +60,8 @@ public class ImportService : IImportService
             else
             {
                 isResume = true;
+                _logger.LogInformation("Resuming import from LastExternalId: '{LastId}'. Processed so far: {Count}", 
+                    progress.LastProcessedExternalId, progress.ProcessedCount);
             }
         }
 
@@ -83,6 +93,7 @@ public class ImportService : IImportService
             {
                 if (userDto.ExternalId == lastProcessedExternalId)
                 {
+                    _logger.LogInformation("Found resume point at '{ExternalId}'. Switching to processing mode.", userDto.ExternalId);
                     skipMode = false;
                 }
 
@@ -98,7 +109,7 @@ public class ImportService : IImportService
                 batchUsers.Clear();
             }
         }
-
+        
         if (batchUsers.Any())
         {
             await SaveBatchAsync(batchUsers, progress, cancellationToken);
@@ -106,6 +117,8 @@ public class ImportService : IImportService
 
         progress.IsCompleted = true;
         await _context.SaveChangesAsync(cancellationToken);
+        
+        _logger.LogInformation("Import completed successfully for '{FileName}'. Total records: {Total}", fileName, progress.ProcessedCount);
     }
 
     private User MapUser(ImportUserDto userDto, string passwordHash)
@@ -147,7 +160,10 @@ public class ImportService : IImportService
             var newUsers = users
                 .Where(u => !existingExternalIds.Contains(u.ExternalId))
                 .ToList();
-
+            
+            _logger.LogInformation("Saving batch. Total in batch: {BatchCount}. New: {NewCount}. Duplicates skipped: {DupCount}", 
+                users.Count, newUsers.Count, existingExternalIds.Count);
+            
             if (newUsers.Count > 0)
             {
                 await _context.Users.AddRangeAsync(newUsers, cancellationToken);
@@ -163,9 +179,10 @@ public class ImportService : IImportService
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
+            _logger.LogError(ex, "Failed to save batch. Last ExternalId in batch: {LastId}", users.LastOrDefault()?.ExternalId);
             throw;
         }
     }
