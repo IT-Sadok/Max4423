@@ -12,7 +12,7 @@ public class ImportService : IImportService
 {
     private readonly ApplicationDbContext _context;
     private readonly IPasswordHasher<User> _passwordHasher;
-    private const int BatchSize = 5000;
+    private const int BatchSize = 200;
 
     public ImportService(ApplicationDbContext context, IPasswordHasher<User> passwordHasher)
     {
@@ -22,18 +22,41 @@ public class ImportService : IImportService
 
     public async Task ImportDataAsync(Stream fileStream, string fileName, CancellationToken cancellationToken)
     {
+        long currentFileSize = fileStream.Length;
+
         var progress = await _context.ImportProgresses
             .FirstOrDefaultAsync(p => p.FileName == fileName, cancellationToken);
 
-        string? lastProcessedExternalId = progress?.LastProcessedExternalId;
-        bool skipMode = !string.IsNullOrEmpty(lastProcessedExternalId);
+        bool isResume = false;
 
         if (progress == null)
         {
-            progress = new ImportProgress { FileName = fileName, UpdatedAt = DateTime.UtcNow };
+            progress = new ImportProgress
+                { FileName = fileName, TotalBytes = currentFileSize, UpdatedAt = DateTime.UtcNow };
             _context.ImportProgresses.Add(progress);
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+        else
+        {
+            if (progress.TotalBytes != currentFileSize || progress.IsCompleted)
+            {
+                progress.LastProcessedExternalId = null;
+                progress.ProcessedCount = 0;
+                progress.TotalBytes = currentFileSize;
+                progress.IsCompleted = false;
+                progress.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            else
+            {
+                isResume = true;
+            }
+        }
+
+        string? lastProcessedExternalId = progress?.LastProcessedExternalId;
+        bool skipMode = !string.IsNullOrEmpty(lastProcessedExternalId);
 
         var options = new JsonSerializerOptions
         {
@@ -43,6 +66,11 @@ public class ImportService : IImportService
         var defaultPasswordHash = _passwordHasher.HashPassword(null!, "DefaultUser123!");
 
         var batchUsers = new List<User>();
+
+        if (fileStream.Position != 0 && fileStream.CanSeek)
+        {
+            fileStream.Position = 0;
+        }
 
         var userStream =
             JsonSerializer.DeserializeAsyncEnumerable<ImportUserDto>(fileStream, options, cancellationToken);
@@ -75,6 +103,9 @@ public class ImportService : IImportService
         {
             await SaveBatchAsync(batchUsers, progress, cancellationToken);
         }
+
+        progress.IsCompleted = true;
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     private User MapUser(ImportUserDto userDto, string passwordHash)
@@ -106,14 +137,29 @@ public class ImportService : IImportService
 
         try
         {
-            await _context.Users.AddRangeAsync(users, cancellationToken);
+            var externalIds = users.Select(u => u.ExternalId).ToList();
+
+            var existingExternalIds = await _context.Users
+                .Where(u => externalIds.Contains(u.ExternalId))
+                .Select(u => u.ExternalId)
+                .ToListAsync(cancellationToken);
+
+            var newUsers = users
+                .Where(u => !existingExternalIds.Contains(u.ExternalId))
+                .ToList();
+
+            if (newUsers.Count > 0)
+            {
+                await _context.Users.AddRangeAsync(newUsers, cancellationToken);
+                progress.ProcessedCount += newUsers.Count;
+            }
+
             if (users.Count > 0)
             {
                 progress.LastProcessedExternalId = users.Last().ExternalId!;
-                progress.ProcessedCount += users.Count;
                 progress.UpdatedAt = DateTime.UtcNow;
             }
-            
+
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
