@@ -24,11 +24,12 @@ public class ImportService : IImportService
         _context = context;
         _passwordHasher = passwordHasher;
         _logger = logger;
-        _defaultPassword = configuration["ImportSettings:DefaultPassword"] 
+        _defaultPassword = configuration["ImportSettings:DefaultPassword"]
                            ?? throw new InvalidOperationException("Default password is not configured in secrets.");
     }
 
-    public async Task ImportDataAsync(Stream fileStream, string fileName, long fileSize,CancellationToken cancellationToken)
+    public async Task ImportDataAsync(Stream fileStream, string fileName, long fileSize,
+        CancellationToken cancellationToken)
     {
         long currentFileSize = fileSize;
 
@@ -36,7 +37,7 @@ public class ImportService : IImportService
 
         var progress = await _context.ImportProgresses
             .FirstOrDefaultAsync(p => p.FileName == fileName, cancellationToken);
-        
+
         if (progress == null)
         {
             _logger.LogInformation("New file detected. Creating tracking record.");
@@ -163,23 +164,44 @@ public class ImportService : IImportService
 
             if (uniqueBatchUsers.Count < users.Count)
             {
-                _logger.LogWarning("Found {Count} duplicate ExternalIds within the batch. They were skipped.", users.Count - uniqueBatchUsers.Count);
+                _logger.LogWarning("Found {Count} duplicate ExternalIds within the batch. They were skipped.",
+                    users.Count - uniqueBatchUsers.Count);
             }
-            
+
             var externalIds = uniqueBatchUsers.Select(u => u.ExternalId).ToList();
+            var normalizedEmails =
+                uniqueBatchUsers.Select(u => u.NormalizedEmail).ToList(); // Беремо нормалізовані емейли
 
             var existingExternalIds = await _context.Users
                 .Where(u => externalIds.Contains(u.ExternalId))
                 .Select(u => u.ExternalId)
                 .ToListAsync(cancellationToken);
 
+            var existingEmails = await _context.Users
+                .Where(u => normalizedEmails.Contains(u.NormalizedUserName))
+                .Select(u => u.NormalizedUserName)
+                .ToListAsync(cancellationToken);
+
             var newUsers = uniqueBatchUsers
                 .Where(u => !existingExternalIds.Contains(u.ExternalId))
+                .Where(u => !existingEmails.Contains(u.NormalizedUserName))
                 .ToList();
 
             _logger.LogInformation(
                 "Saving batch. Total in batch: {BatchCount}. New: {NewCount}. Duplicates skipped: {DupCount}",
                 users.Count, newUsers.Count, existingExternalIds.Count);
+            int skippedByEmail = uniqueBatchUsers.Count - existingExternalIds.Count - newUsers.Count;
+
+            if (skippedByEmail > 0)
+            {
+                _logger.LogWarning(
+                    "Skipped {Count} users because their Email/UserName is already taken by a different ExternalId.",
+                    skippedByEmail);
+            }
+
+            _logger.LogInformation(
+                "Saving batch. Total: {Total}. Insert: {Insert}. Skipped (ID exist): {SkipId}. Skipped (Email exist): {SkipEmail}",
+                users.Count, newUsers.Count, existingExternalIds.Count, skippedByEmail);
 
             if (newUsers.Count > 0)
             {
