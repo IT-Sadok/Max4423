@@ -13,15 +13,16 @@ namespace BookingSystem.Api.Controllers;
 public class ImportController : ControllerBase
 {
     private readonly IMediator _mediator;
-
+    private const long MaxFileSizeLimit = 5L * 1024 * 1024 * 1024;
+    
     public ImportController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [HttpPost]
-    [RequestSizeLimit(long.MaxValue)]
-    [RequestFormLimits(MultipartBodyLengthLimit = long.MaxValue)]
+    [RequestSizeLimit(MaxFileSizeLimit)]
+    [RequestFormLimits(MultipartBodyLengthLimit = MaxFileSizeLimit)]
     public async Task<IActionResult> ImportData(IFormFile file, CancellationToken cancellationToken)
     {
         if (file.Length == 0)
@@ -35,7 +36,7 @@ public class ImportController : ControllerBase
         }
 
         using var stream = file.OpenReadStream();
-        var command = new ImportDataCommand(stream, file.FileName);
+        var command = new ImportDataCommand(stream, file.FileName, file.Length);
         
         var result = await _mediator.Send(command, cancellationToken);
 

@@ -2,5 +2,5 @@
 
 public interface IImportService
 {
-    Task ImportDataAsync(Stream fileStream, string fileName, CancellationToken cancellationToken);
+    Task ImportDataAsync(Stream fileStream, string fileName, long fileSize, CancellationToken cancellationToken);
 }
