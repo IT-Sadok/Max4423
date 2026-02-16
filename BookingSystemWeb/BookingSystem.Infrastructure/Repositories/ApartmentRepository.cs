@@ -25,7 +25,7 @@ public class ApartmentRepository : IApartmentRepository
     public async Task<PaginatedList<Apartment>> SearchAvailableAsync(
         DateTime? start, 
         DateTime? end, 
-        int pageNumber, 
+        int pageNumber,
         int pageSize, 
         CancellationToken cancellationToken = default)
     {

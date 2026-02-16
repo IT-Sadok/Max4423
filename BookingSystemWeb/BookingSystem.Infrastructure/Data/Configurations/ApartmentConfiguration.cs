@@ -16,8 +16,10 @@ public class ApartmentConfiguration:IEntityTypeConfiguration<Apartment>
             .HasPrecision(18, 2);
         
         builder.HasOne(a => a.Host)
-            .WithMany()
+            .WithMany(u => u.Apartments)
             .HasForeignKey(a => a.HostId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(a => a.ExternalId);
     }
 }

@@ -1,0 +1,12 @@
+﻿namespace BookingSystem.Domain.Entities;
+
+public class ImportProgress
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string FileName { get; set; } = string.Empty;
+    public string? LastProcessedExternalId { get; set; }
+    public int ProcessedCount { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public long TotalBytes { get; set; }
+    public bool IsCompleted { get; set; }
+}
