@@ -1,4 +1,5 @@
-﻿using BookingSystem.Application.Features.Apartments.Queries.SearchApartments;
+﻿using BookingSystem.Application.Features.Apartments.Commands.UpsertApartment;
+using BookingSystem.Application.Features.Apartments.Queries.SearchApartments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,5 +31,18 @@ public class ApartmentsController : ControllerBase
         }
 
         return BadRequest(result.ErrorMessage);
+    }
+    
+    [HttpPost("upsert")]
+    public async Task<IActionResult> Upsert([FromBody] UpsertApartmentCommand command)
+    {
+        var success = await _mediator.Send(command);
+        
+        if (success)
+        {
+            return Ok(new { Message = "Apartment upserted successfully." });
+        }
+        
+        return BadRequest("Failed to upsert apartment.");
     }
 }

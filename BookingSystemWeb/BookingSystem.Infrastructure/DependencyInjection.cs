@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using BookingSystem.Domain.Repositories;
+using BookingSystem.Infrastructure.Data;
 using BookingSystem.Infrastructure.Data.Factory;
 using BookingSystem.Infrastructure.ImportData;
 using BookingSystem.Infrastructure.Repositories;
@@ -54,6 +55,8 @@ public static class DependencyInjection
         services.AddScoped<IImportService, ImportService>();
 
         services.AddTransient<ISqlConnectionFactory, SqlConnectionFactory>();
+        services.AddSingleton<ISqlQueryProvider, SqlQueryProvider>();
+        services.AddScoped<IApartmentSqlRepository, ApartmentSqlRepository>();
         return services;
     }
 }

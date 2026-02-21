@@ -20,7 +20,8 @@ public class ApartmentConfiguration:IEntityTypeConfiguration<Apartment>
             .HasForeignKey(a => a.HostId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasIndex(a => a.ExternalId);
+        builder.HasIndex(a => a.ExternalId)
+            .IsUnique();
         
         builder.Property(a => a.CustomData)
             .HasColumnType("jsonb");
