@@ -21,5 +21,8 @@ public class ApartmentConfiguration:IEntityTypeConfiguration<Apartment>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasIndex(a => a.ExternalId);
+        
+        builder.Property(a => a.CustomData)
+            .HasColumnType("jsonb");
     }
 }

@@ -10,6 +10,7 @@ public class Apartment
     public string Address { get; private set; } = string.Empty;
     public decimal PricePerNight { get; private set; }
     public string? ExternalId { get; set; }
+    public string? CustomData { get; set; }
     
     public Apartment(Guid hostId, string title, string description, string address, decimal pricePerNight, string? externalId = null)
     {
