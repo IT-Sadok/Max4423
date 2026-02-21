@@ -1,6 +1,8 @@
-﻿using BookingSystem.Application.Features.Apartments.Commands.UpsertApartment;
+﻿using System.Security.Claims;
+using BookingSystem.Application.Features.Apartments.Commands.UpsertApartment;
 using BookingSystem.Application.Features.Apartments.Queries.SearchApartments;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,15 +36,29 @@ public class ApartmentsController : ControllerBase
     }
     
     [HttpPost("upsert")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] 
     public async Task<IActionResult> Upsert([FromBody] UpsertApartmentCommand command)
     {
-        var success = await _mediator.Send(command);
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         
-        if (success)
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var currentUserId))
         {
-            return Ok(new { Message = "Apartment upserted successfully." });
+            return Unauthorized("User ID is missing or invalid in token.");
         }
         
-        return BadRequest("Failed to upsert apartment.");
+        var secureCommand = command with { HostId = currentUserId };
+        
+        var apartmentId = await _mediator.Send(secureCommand);
+        
+        if (apartmentId != Guid.Empty)
+        {
+            return Ok(new 
+            { 
+                Message = "Apartment upserted successfully.", 
+                Id = apartmentId 
+            });
+        }
+        
+        return BadRequest("Failed to upsert apartment. It might belong to another user.");
     }
 }

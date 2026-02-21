@@ -10,6 +10,9 @@ public class ApartmentConfiguration:IEntityTypeConfiguration<Apartment>
     {
         builder.HasKey(x => x.Id);
         
+        builder.Property(a => a.Id)
+            .HasDefaultValueSql("gen_random_uuid()");
+        
         builder.Property(x => x.Title).IsRequired();
         
         builder.Property(a => a.PricePerNight)

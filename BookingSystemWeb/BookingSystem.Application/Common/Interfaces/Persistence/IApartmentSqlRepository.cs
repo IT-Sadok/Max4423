@@ -5,5 +5,5 @@ namespace BookingSystem.Application.Common.Interfaces.Persistence;
 
 public interface IApartmentSqlRepository
 {
-    Task<bool> UpsertAsync(ApartmentUpsertDto dto, CancellationToken cancellationToken);
+    Task<Guid> UpsertAsync(ApartmentUpsertDto dto, CancellationToken cancellationToken);
 }

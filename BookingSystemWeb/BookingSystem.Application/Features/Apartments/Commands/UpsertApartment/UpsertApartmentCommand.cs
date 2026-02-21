@@ -3,7 +3,6 @@
 namespace BookingSystem.Application.Features.Apartments.Commands.UpsertApartment;
 
 public record UpsertApartmentCommand(
-    Guid Id,
     string Title,
     string Description,
     string Address,
@@ -11,4 +10,4 @@ public record UpsertApartmentCommand(
     string ExternalId,
     Guid HostId,
     string? CustomData
-) : IRequest<bool>;
+) : IRequest<Guid>;

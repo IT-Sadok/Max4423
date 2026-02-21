@@ -1,25 +1,23 @@
-﻿INSERT INTO "Apartments" ("Id",
-                          "Title",
+﻿INSERT INTO "Apartments" ("Title",
                           "Description",
                           "Address",
                           "PricePerNight",
                           "ExternalId",
                           "HostId",
                           "CustomData")
-VALUES (@Id,
-        @Title,
+VALUES (@Title,
         @Description,
         @Address,
         @PricePerNight,
         @ExternalId,
         @HostId,
-        @CustomData::jsonb) 
-ON CONFLICT ("ExternalId")
+        @CustomData::jsonb) ON CONFLICT ("ExternalId")
 DO
 UPDATE SET
     "Title" = EXCLUDED."Title",
     "Description" = EXCLUDED."Description",
     "Address" = EXCLUDED."Address",
     "PricePerNight" = EXCLUDED."PricePerNight",
-    "HostId" = EXCLUDED."HostId",
-    "CustomData" = EXCLUDED."CustomData";
+    "CustomData" = EXCLUDED."CustomData"
+WHERE "Apartments"."HostId" = EXCLUDED."HostId"
+    RETURNING "Id";

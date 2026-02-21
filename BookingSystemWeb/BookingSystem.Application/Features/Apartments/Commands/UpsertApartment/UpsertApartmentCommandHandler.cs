@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BookingSystem.Application.Features.Apartments.Commands.UpsertApartment;
 
-public class UpsertApartmentCommandHandler : IRequestHandler<UpsertApartmentCommand, bool>
+public class UpsertApartmentCommandHandler : IRequestHandler<UpsertApartmentCommand, Guid>
 {
     private readonly IApartmentSqlRepository _sqlRepository;
 
@@ -13,11 +13,10 @@ public class UpsertApartmentCommandHandler : IRequestHandler<UpsertApartmentComm
         _sqlRepository = sqlRepository;
     }
 
-    public async Task<bool> Handle(UpsertApartmentCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(UpsertApartmentCommand request, CancellationToken cancellationToken)
     {
         var dto = new ApartmentUpsertDto
         {
-            Id = request.Id,
             Title = request.Title,
             Description = request.Description,
             Address = request.Address,
