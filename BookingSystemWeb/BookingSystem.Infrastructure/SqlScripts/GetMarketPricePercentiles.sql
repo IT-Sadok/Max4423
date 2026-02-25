@@ -1,0 +1,6 @@
+﻿SELECT
+    PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY "PricePerNight") AS Percentile25,
+    PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY "PricePerNight") AS MedianPrice,
+    PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY "PricePerNight") AS Percentile75,
+    PERCENTILE_CONT(0.90) WITHIN GROUP (ORDER BY "PricePerNight") AS PremiumThreshold
+FROM "Apartments";

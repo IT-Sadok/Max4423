@@ -57,6 +57,8 @@ public static class DependencyInjection
         services.AddTransient<ISqlConnectionFactory, SqlConnectionFactory>();
         services.AddSingleton<ISqlQueryProvider, SqlQueryProvider>();
         services.AddScoped<IApartmentSqlRepository, ApartmentSqlRepository>();
+        
+        services.AddScoped<IAnalyticsSqlRepository, AnalyticsSqlRepository>();
         return services;
     }
 }
