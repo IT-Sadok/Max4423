@@ -7,4 +7,5 @@ FROM "Apartments" a
     AND b."CheckInDate" >= @StartDate
     AND b."CheckInDate" <= @EndDate
 GROUP BY a."Id", a."Title"
-ORDER BY TotalBookedDays DESC;
+ORDER BY TotalBookedDays DESC
+LIMIT @Limit OFFSET @Offset;

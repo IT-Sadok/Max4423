@@ -6,4 +6,5 @@
 FROM "Apartments"
 GROUP BY "HostId"
 HAVING COUNT("Id") >= 2
-ORDER BY TotalApartments DESC;
+ORDER BY TotalApartments DESC
+LIMIT @Limit OFFSET @Offset;

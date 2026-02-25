@@ -3,6 +3,6 @@
 public record ApartmentOccupancyDto(
     Guid ApartmentId,
     string Title,
-    int BookingsCount,
-    int TotalBookedDays
+    long BookingsCount,
+    long TotalBookedDays
 );

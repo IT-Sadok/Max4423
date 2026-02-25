@@ -2,7 +2,7 @@
 
 public record MonthlyDynamicsDto(
     string BookingMonth,
-    int TotalBookings,
+    long TotalBookings,
     decimal AverageCheck,
     decimal MonthlyRevenue
 );

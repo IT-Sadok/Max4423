@@ -2,6 +2,6 @@
 
 public record TopHostPerformanceDto(
     Guid HostId,
-    int TotalBookings,
+    long TotalBookings,
     decimal TotalRevenue
 );
