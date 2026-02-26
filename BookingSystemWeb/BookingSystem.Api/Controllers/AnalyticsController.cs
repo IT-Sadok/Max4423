@@ -39,19 +39,22 @@ public class AnalyticsController:ControllerBase
     
     [HttpGet("apartment-occupancy")]
     public async Task<IActionResult> GetApartmentOccupancy(
-        [FromQuery] DateTime startDate, 
-        [FromQuery] DateTime endDate,
+        [FromQuery] DateTime? startDate, 
+        [FromQuery] DateTime? endDate,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10) 
     {
-        if (startDate >= endDate) return BadRequest("StartDate must be before EndDate.");
+        var actualStartDate = startDate ?? DateTime.MinValue;
+        var actualEndDate = endDate ?? DateTime.MaxValue;
+        
+        if (actualStartDate >= actualEndDate) return BadRequest("Please, enter correct startDate and endDate.");
     
         if (pageNumber <= 0 || pageSize <= 0)
         {
             return BadRequest("PageNumber and PageSize must be greater than zero.");
         }
         
-        var result = await _mediator.Send(new GetApartmentOccupancyQuery(startDate, endDate, pageNumber, pageSize));
+        var result = await _mediator.Send(new GetApartmentOccupancyQuery(actualStartDate, actualEndDate, pageNumber, pageSize));
         return Ok(result);
     }
     

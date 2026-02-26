@@ -2,6 +2,7 @@
 
 public record HostPortfolioDto(
     Guid HostId,
+    string HostName,
     long TotalApartments,
     decimal AveragePrice,
     decimal MinPrice,
