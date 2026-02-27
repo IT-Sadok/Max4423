@@ -34,7 +34,7 @@ public class AnalyticsSqlRepository : IAnalyticsSqlRepository
     {
         var sql = _queryProvider.GetQuery("GetTopHostsPerformance.sql");
         using var connection = _connectionFactory.CreateConnection();
-        return await connection.QueryAsync<TopHostPerformanceDto>(new CommandDefinition(sql, cancellationToken));
+        return await connection.QueryAsync<TopHostPerformanceDto>(new CommandDefinition(sql,cancellationToken: cancellationToken));
     }
 
     public async Task<IEnumerable<MonthlyDynamicsDto>> GetMonthlyDynamicsAsync(
@@ -42,7 +42,7 @@ public class AnalyticsSqlRepository : IAnalyticsSqlRepository
     {
         var sql = _queryProvider.GetQuery("GetMonthlyDynamics.sql");
         using var connection = _connectionFactory.CreateConnection();
-        return await connection.QueryAsync<MonthlyDynamicsDto>(new CommandDefinition(sql, cancellationToken));
+        return await connection.QueryAsync<MonthlyDynamicsDto>(new CommandDefinition(sql,cancellationToken: cancellationToken));
     }
 
     public async Task<MarketPricePercentilesDto> GetMarketPricePercentilesAsync(

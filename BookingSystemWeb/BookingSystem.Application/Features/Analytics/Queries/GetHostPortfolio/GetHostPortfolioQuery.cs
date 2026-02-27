@@ -15,8 +15,8 @@ public class GetHostPortfolioQueryHandler : IRequestHandler<GetHostPortfolioQuer
         _repository = repository;
     }
 
-    public async Task<IEnumerable<HostPortfolioDto>> Handle(GetHostPortfolioQuery request, CancellationToken
-        cancellationToken)
+    public async Task<IEnumerable<HostPortfolioDto>> Handle(GetHostPortfolioQuery request, CancellationToken cancellationToken)
     {
-        return await _repository.GetHostsPortfolioAsync(request.PageNumber, request.PageSize, cancellationToken);    }
+        return await _repository.GetHostsPortfolioAsync(request.PageNumber, request.PageSize, cancellationToken);
+    }
 }

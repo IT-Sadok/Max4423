@@ -2,7 +2,6 @@ using BookingSystem.Application;
 using BookingSystem.Domain;
 using BookingSystem.Infrastructure;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +23,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter only your JWT token (without 'Bearer ' prefix — Swagger adds it automatically)"
+        Description = "Enter only your JWT token (without 'Bearer' prefix — Swagger adds it automatically)"
     });
     options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
     {

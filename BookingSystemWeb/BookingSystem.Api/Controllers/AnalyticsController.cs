@@ -1,12 +1,13 @@
 ﻿using BookingSystem.Application.Features.Analytics.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookingSystem.Api.Controllers;
 
 [Route("api/analytics")]
 [ApiController]
-//[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin")]
 public class AnalyticsController:ControllerBase
 {
     private readonly IMediator _mediator;
@@ -44,8 +45,8 @@ public class AnalyticsController:ControllerBase
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10) 
     {
-        var actualStartDate = startDate ?? DateTime.MinValue;
-        var actualEndDate = endDate ?? DateTime.MaxValue;
+        var actualStartDate = startDate ?? DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc);
+        var actualEndDate = endDate ?? DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc);
         
         if (actualStartDate >= actualEndDate) return BadRequest("Please, enter correct startDate and endDate.");
     
