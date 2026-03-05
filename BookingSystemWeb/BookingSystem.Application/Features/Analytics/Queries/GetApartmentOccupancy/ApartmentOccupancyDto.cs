@@ -1,4 +1,4 @@
-﻿namespace BookingSystem.Application.Common.DTOs;
+﻿namespace BookingSystem.Application.Features.Analytics.Queries.GetApartmentOccupancy;
 
 public record ApartmentOccupancyDto(
     Guid ApartmentId,

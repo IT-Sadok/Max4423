@@ -2,7 +2,7 @@
 using BookingSystem.Application.Common.Interfaces.Persistence;
 using MediatR;
 
-namespace BookingSystem.Application.Features.Analytics.Queries;
+namespace BookingSystem.Application.Features.Analytics.Queries.GetApartmentOccupancy;
 
 public record GetApartmentOccupancyQuery(
     DateTime? StartDate,

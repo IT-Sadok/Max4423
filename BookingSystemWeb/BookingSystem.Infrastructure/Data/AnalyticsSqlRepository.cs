@@ -1,5 +1,6 @@
 ﻿using BookingSystem.Application.Common.DTOs;
 using BookingSystem.Application.Common.Interfaces.Persistence;
+using BookingSystem.Application.Features.Analytics.Queries.GetApartmentOccupancy;
 using Dapper;
 
 namespace BookingSystem.Infrastructure.Data;

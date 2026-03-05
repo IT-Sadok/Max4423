@@ -1,5 +1,6 @@
 ﻿using BookingSystem.Api.Models.Analytics;
 using BookingSystem.Application.Features.Analytics.Queries;
+using BookingSystem.Application.Features.Analytics.Queries.GetApartmentOccupancy;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

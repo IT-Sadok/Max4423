@@ -1,4 +1,5 @@
 ﻿using BookingSystem.Application.Common.DTOs;
+using BookingSystem.Application.Features.Analytics.Queries.GetApartmentOccupancy;
 
 namespace BookingSystem.Application.Common.Interfaces.Persistence;
 

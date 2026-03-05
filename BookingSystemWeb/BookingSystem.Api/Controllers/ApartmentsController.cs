@@ -36,7 +36,7 @@ public class ApartmentsController : ControllerBase
     }
     
     [HttpPost("upsert")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] 
+    [Authorize(Roles = "Host", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> Upsert([FromBody] UpsertApartmentCommand command)
     {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
