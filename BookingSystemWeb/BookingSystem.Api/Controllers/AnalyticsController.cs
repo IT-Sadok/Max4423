@@ -1,4 +1,5 @@
-﻿using BookingSystem.Application.Features.Analytics.Queries;
+﻿using BookingSystem.Api.Models.Analytics;
+using BookingSystem.Application.Features.Analytics.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,22 +41,10 @@ public class AnalyticsController:ControllerBase
     
     [HttpGet("apartment-occupancy")]
     public async Task<IActionResult> GetApartmentOccupancy(
-        [FromQuery] DateTime? startDate, 
-        [FromQuery] DateTime? endDate,
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10) 
+        [FromQuery] GetApartmentOccupancyRequest request) 
     {
-        var actualStartDate = startDate ?? DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc);
-        var actualEndDate = endDate ?? DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc);
-        
-        if (actualStartDate >= actualEndDate) return BadRequest("Please, enter correct startDate and endDate.");
-    
-        if (pageNumber <= 0 || pageSize <= 0)
-        {
-            return BadRequest("PageNumber and PageSize must be greater than zero.");
-        }
-        
-        var result = await _mediator.Send(new GetApartmentOccupancyQuery(actualStartDate, actualEndDate, pageNumber, pageSize));
+        var result = await _mediator.Send(new GetApartmentOccupancyQuery(request.StartDate, 
+            request.EndDate, request.PageNumber, request.PageSize));
         return Ok(result);
     }
     

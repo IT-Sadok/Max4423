@@ -54,8 +54,8 @@ public class AnalyticsSqlRepository : IAnalyticsSqlRepository
             new CommandDefinition(sql, cancellationToken: cancellationToken));
     }
 
-    public async Task<IEnumerable<ApartmentOccupancyDto>> GetApartmentOccupancyAsync(DateTime startDate,
-        DateTime endDate, int pageNumber,
+    public async Task<IEnumerable<ApartmentOccupancyDto>> GetApartmentOccupancyAsync(DateTime? startDate,
+        DateTime? endDate, int pageNumber,
         int pageSize, CancellationToken cancellationToken = default)
     {
         var sql = _queryProvider.GetQuery("GetApartmentOccupancy.sql");

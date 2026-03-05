@@ -9,5 +9,5 @@ public interface IAnalyticsSqlRepository
     Task<IEnumerable<MonthlyDynamicsDto>> GetMonthlyDynamicsAsync(CancellationToken cancellationToken = default);
     Task<MarketPricePercentilesDto> GetMarketPricePercentilesAsync(CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<ApartmentOccupancyDto>> GetApartmentOccupancyAsync(DateTime startDate, DateTime endDate, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+    Task<IEnumerable<ApartmentOccupancyDto>> GetApartmentOccupancyAsync(DateTime? startDate, DateTime? endDate, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
 }

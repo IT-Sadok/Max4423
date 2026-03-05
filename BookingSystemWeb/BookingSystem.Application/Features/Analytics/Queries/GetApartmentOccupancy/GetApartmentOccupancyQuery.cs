@@ -5,8 +5,8 @@ using MediatR;
 namespace BookingSystem.Application.Features.Analytics.Queries;
 
 public record GetApartmentOccupancyQuery(
-    DateTime StartDate,
-    DateTime EndDate,
+    DateTime? StartDate,
+    DateTime? EndDate,
     int PageNumber,
     int PageSize) : IRequest<IEnumerable<ApartmentOccupancyDto>>;
 
