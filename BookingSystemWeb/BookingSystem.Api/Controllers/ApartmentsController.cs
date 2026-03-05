@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using BookingSystem.Api.Models.Apartments;
 using BookingSystem.Application.Features.Apartments.Commands.UpsertApartment;
 using BookingSystem.Application.Features.Apartments.Queries.SearchApartments;
 using MediatR;
@@ -21,10 +22,9 @@ public class ApartmentsController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IActionResult> Search([FromQuery] DateTime? checkInDate, [FromQuery] DateTime? checkOutDate,
-        [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    public async Task<IActionResult> Search([FromQuery] SearchApartmentsRequest request)
     {
-        var query = new SearchApartmentsQuery(checkInDate, checkOutDate, pageNumber, pageSize);
+        var query = new SearchApartmentsQuery(request.CheckInDate, request.CheckOutDate, request.PageNumber, request.PageSize);
         
         var result = await _mediator.Send(query);
         if (result.IsSuccess)
