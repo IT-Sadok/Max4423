@@ -8,6 +8,6 @@ public class CancelBookingCommandValidator: AbstractValidator<CancelBookingComma
     {
         RuleFor(x => x.BookingId)
             .NotEmpty()
-            .WithMessage("BookingId is required."); 
+            .WithMessage("BookingId is required.");
     }
 }

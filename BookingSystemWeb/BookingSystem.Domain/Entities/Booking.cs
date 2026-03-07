@@ -1,4 +1,5 @@
-﻿using BookingSystem.Domain.Enums;
+﻿using BookingSystem.Domain.Common;
+using BookingSystem.Domain.Enums;
 
 namespace BookingSystem.Domain.Entities;
 
@@ -41,16 +42,17 @@ public class Booking
         return days * pricePerNight;
     }
 
-    public void Cancel()
+    public Result<bool> Cancel()
     {
         if (BookingStatus == BookingStatus.Cancelled)
         {
-            return;
+            return Result<bool>.Success(true);
         }
         if (CheckInDate <= DateTime.UtcNow)
         {
-            throw new InvalidOperationException("Cannot cancel a booking that has already started.");
+            return Result<bool>.Failure("Cannot cancel a booking on or after the check-in date.");
         }
         BookingStatus = BookingStatus.Cancelled;
+        return Result<bool>.Success(true);
     }
 }

@@ -20,7 +20,7 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
 
     public async Task<Result<bool>> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
     {
-        var booking = await _bookingRepository.GetByIdAsync(request.BookingId, cancellationToken );
+        var booking = await _bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
         var userId = _currentUserService.UserId;
 
         if (booking == null || userId == null || booking.UserId != userId)
@@ -28,7 +28,12 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
             return Result<bool>.Failure("Booking not found.");
         }
 
-        booking.Cancel();
+        var cancelResult = booking.Cancel();
+        
+        if (!cancelResult.IsSuccess)
+        {
+            return Result<bool>.Failure("Booking not found.");; 
+        }
         
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
