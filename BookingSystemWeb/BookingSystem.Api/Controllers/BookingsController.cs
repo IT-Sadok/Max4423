@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using BookingSystem.Application.Features.Bookings.Commands;
+using BookingSystem.Application.Features.Bookings.Commands.CancelBooking;
 using BookingSystem.Application.Features.Bookings.Commands.CreateBooking;
 using BookingSystem.Application.Features.Bookings.Queries.GetMyBookings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -45,4 +46,17 @@ public class BookingsController: ControllerBase
         return BadRequest(new { Error = result.ErrorMessage });
     }
 
+    [HttpPatch("{id}/cancel")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> CancelBooking([FromRoute] Guid id)
+    {
+        var command = new CancelBookingCommand { BookingId = id };
+        
+        var result = await _mediator.Send(command);
+        if (result.IsSuccess)
+        {
+            return Ok(new { Message = "Booking was successfully cancelled." });
+        }
+        return BadRequest(new { Error = result.ErrorMessage });       
+    }
 }

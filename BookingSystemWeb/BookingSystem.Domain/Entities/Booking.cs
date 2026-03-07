@@ -40,4 +40,17 @@ public class Booking
 
         return days * pricePerNight;
     }
+
+    public void Cancel()
+    {
+        if (BookingStatus == BookingStatus.Cancelled)
+        {
+            return;
+        }
+        if (CheckInDate <= DateTime.UtcNow)
+        {
+            throw new InvalidOperationException("Cannot cancel a booking that has already started.");
+        }
+        BookingStatus = BookingStatus.Cancelled;
+    }
 }

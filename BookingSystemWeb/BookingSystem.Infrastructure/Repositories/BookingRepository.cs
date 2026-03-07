@@ -1,4 +1,5 @@
 ﻿using BookingSystem.Domain.Entities;
+using BookingSystem.Domain.Enums;
 using BookingSystem.Domain.Repositories;
 using BookingSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public class BookingRepository : IBookingRepository
         return await _context.Bookings
             .AnyAsync(b =>
                     b.ApartmentId == apartmentId &&
+                    b.BookingStatus != BookingStatus.Cancelled &&
                     b.CheckInDate < end &&
                     b.CheckOutDate > start,
                 cancellationToken);

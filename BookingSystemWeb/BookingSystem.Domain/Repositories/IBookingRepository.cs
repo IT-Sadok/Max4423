@@ -9,4 +9,5 @@ public interface IBookingRepository
     Task<List<Booking>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
     
     void Add(Booking booking);
+    Task<Booking?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 }
