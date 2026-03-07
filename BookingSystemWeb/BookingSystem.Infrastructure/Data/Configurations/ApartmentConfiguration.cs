@@ -10,6 +10,9 @@ public class ApartmentConfiguration:IEntityTypeConfiguration<Apartment>
     {
         builder.HasKey(x => x.Id);
         
+        builder.Property(a => a.Id)
+            .HasDefaultValueSql("gen_random_uuid()");
+        
         builder.Property(x => x.Title).IsRequired();
         
         builder.Property(a => a.PricePerNight)
@@ -20,6 +23,10 @@ public class ApartmentConfiguration:IEntityTypeConfiguration<Apartment>
             .HasForeignKey(a => a.HostId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasIndex(a => a.ExternalId);
+        builder.HasIndex(a => a.ExternalId)
+            .IsUnique();
+        
+        builder.Property(a => a.CustomData)
+            .HasColumnType("jsonb");
     }
 }

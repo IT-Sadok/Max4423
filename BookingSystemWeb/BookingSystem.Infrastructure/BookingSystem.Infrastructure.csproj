@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Dapper" Version="2.1.66" />
       <PackageReference Include="Mapster" Version="9.0.0-pre01" />
       <PackageReference Include="Mapster.DependencyInjection" Version="9.0.0-pre01" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
@@ -19,5 +20,9 @@
       <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.1" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
     </ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="SqlScripts\**\*.sql" />
+	</ItemGroup>
 
 </Project>

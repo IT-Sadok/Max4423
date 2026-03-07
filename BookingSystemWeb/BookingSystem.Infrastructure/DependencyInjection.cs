@@ -1,12 +1,15 @@
 ﻿using System.Text;
 using BookingSystem.Application.Common.Interfaces.Authentication;
 using BookingSystem.Application.Common.Interfaces.ImportData;
+using BookingSystem.Application.Common.Interfaces.Persistence;
 using BookingSystem.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using BookingSystem.Domain.Repositories;
+using BookingSystem.Infrastructure.Data;
+using BookingSystem.Infrastructure.Data.Factory;
 using BookingSystem.Infrastructure.ImportData;
 using BookingSystem.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +23,12 @@ public static class DependencyInjection
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddTransient<IIdentityService, IdentityService>();
-        services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             .AddJwtBearer(options =>
             {
                 var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>();
@@ -50,6 +58,12 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString));
         
         services.AddScoped<IImportService, ImportService>();
+
+        services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
+        services.AddSingleton<ISqlQueryProvider, SqlQueryProvider>();
+        services.AddScoped<IApartmentSqlRepository, ApartmentSqlRepository>();
+        
+        services.AddScoped<IAnalyticsSqlRepository, AnalyticsSqlRepository>();
         return services;
     }
 }
