@@ -1,5 +1,6 @@
 ﻿using BookingSystem.Domain.Common;
 using BookingSystem.Domain.Entities;
+using BookingSystem.Domain.Enums;
 using BookingSystem.Domain.Repositories;
 using BookingSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -23,10 +24,10 @@ public class ApartmentRepository : IApartmentRepository
     }
 
     public async Task<PaginatedList<Apartment>> SearchAvailableAsync(
-        DateTime? start, 
-        DateTime? end, 
+        DateTime? start,
+        DateTime? end,
         int pageNumber,
-        int pageSize, 
+        int pageSize,
         CancellationToken cancellationToken = default)
     {
         var query = _context.Apartments
@@ -37,9 +38,12 @@ public class ApartmentRepository : IApartmentRepository
         if (start.HasValue && end.HasValue)
         {
             var bookedApartmentIds = _context.Bookings
-                .Where(b => b.CheckInDate < end && b.CheckOutDate > start)
+                .Where(b =>
+                    b.BookingStatus != BookingStatus.Cancelled &&
+                    b.CheckInDate < end &&
+                    b.CheckOutDate > start)
                 .Select(b => b.ApartmentId);
-        
+
             query = query.Where(a => !bookedApartmentIds.Contains(a.Id));
         }
 
